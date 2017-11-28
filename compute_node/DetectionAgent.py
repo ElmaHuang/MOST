@@ -7,16 +7,15 @@ import time
 from recvIP import recvIPThread
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
-from RecoveryInstance import RecoveryInstance
 
 class DetectionAgent():
     def __init__(self):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass_node.conf')
+        pass
+        #config = ConfigParser.RawConfigParser()
+        #config.read('hass_node.conf')
         #self.host = None
-        self.recover = RecoveryInstance()
-        self.port = int(config.get("polling","listen_port"))
-        self.version = int(config.get("version","version"))
+        #self.port = int(config.get("polling","listen_port"))
+        #self.version = int(config.get("version","version"))
     '''   
     def startListen(self):
         print "create listen thread"
@@ -147,8 +146,10 @@ def main():
     #agent = DetectionAgent()
     #agent.startListen()
     host_detection = HostFailures()
-    recv = recvIPThread()
-    recv.start()
+    #recv = recvIPThread()
+    #recv.start()
+    instance_detection = InstanceFailure()
+    instance_detection.start()
     asyncore.loop()
     try:
         while True:

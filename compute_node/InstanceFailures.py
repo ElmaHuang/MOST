@@ -4,14 +4,31 @@ import threading
 import time
 # import ConfigParser
 import InstanceEvent
-from DetectionInstance import LibvirtDetetion
 from RecoveryInstance import RecoveryInstance
 
 class InstanceFailure(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         #self.host = host
-        #self.clearlog()
+        self.clearlog()
+        '''
+        while True:
+            self._startDetection()
+            time.sleep(2)
+        '''
+    '''
+    def run(self):
+        #all instance
+        while(True):
+            self.clearlog()
+            #for instance in all_nstance:
+            result = self.check_instance(instance)
+            self.writelog(result)
+    '''
+
+    def __virEventLoopNativeRun(self):
+        while True:
+            libvirt.virEventRunDefaultImpl()
 
     def run(self):
         self.createDetectionThread()
@@ -26,7 +43,7 @@ class InstanceFailure(threading.Thread):
             print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
         finally:
             #self.close()
-            #connect.close()
+            connect.close()
             time.sleep(5)
 
     def createDetectionThread(self):

@@ -31,5 +31,8 @@ class recvIPThread(threading.Thread):
                     host_instance.append(instance)
         return host_instance
 
-    def InstallWatchdog(self):
+    def installWatchdog(self):
+        pass
+
+    def checkVMNetwork(self):
         pass
