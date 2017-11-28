@@ -31,20 +31,16 @@ class InstanceFailure(threading.Thread):
             libvirt.virEventRunDefaultImpl()
 
     def run(self):
+        libvirt_connect = self.createDetectionThread()
         while True:
-            self.createDetectionThread()
-            connect = libvirt.openReadOnly('qemu:///system')
-            if connect == None:
-                print "failed to open connection to qemu:///system"
-            #while True:
             try:
-                connect.domainEventRegister(self._checkVMState,None)
-                connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
+                libvirt_connect.domainEventRegister(self._checkVMState,None)
+                libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
             except Exception as e:
                 print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
             finally:
                 #self.close()
-                connect.close()
+                libvirt_connect.close()
                 time.sleep(5)
 
     def createDetectionThread(self):
@@ -54,7 +50,12 @@ class InstanceFailure(threading.Thread):
             eventLoopThread = threading.Thread(target=self.__virEventLoopNativeRun, name="libvirtEventLoop")
             eventLoopThread.setDaemon(True)
             eventLoopThread.start()
-            # open the connection to self qemu
+
+            connect = libvirt.openReadOnly('qemu:///system')
+            if connect == None:
+                print "failed to open connection to qemu:///system"
+            else:
+                return connect
         except Exception as e:
             return str(e)
 
