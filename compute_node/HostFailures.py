@@ -15,7 +15,7 @@ class HostFailures(asyncore.dispatcher):
         self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.set_reuse_addr()
         self.bind(('', self.port))
-        self.libvirt_url = "qemu:///system"
+        self.libvirt_uri = "qemu:///system"
         print "host failure port:",self.port
 
     def handle_read(self):
