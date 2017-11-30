@@ -39,7 +39,6 @@ class InstanceFailure(threading.Thread):
             except Exception as e:
                 print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
             finally:
-                #self.close()
                 libvirt_connect.close()
                 time.sleep(5)
 
