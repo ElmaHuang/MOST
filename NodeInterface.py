@@ -63,7 +63,7 @@ class NodeInterface(object):
 		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		so.connect((self.name ,5001))
 		#ip = so.recv(1024)
-		so.send("upadte instance")
+		so.send("update instance")
 		#print ip
 		so.close()
 
