@@ -176,13 +176,6 @@ class Hass (object):
         except:
             logging.error("HASS--get All Info from %s fail"%nodeName)
 
-    def getHAInstanceByNode(self,node):
-        try:
-            instance = ClusterManager.getInstanceByNode(node)
-            return instance
-        except:
-            logging.error("HASS--compute node get controller instance fail")
-
     def getNodeInfoByType(self, nodeName, sensorType):
         try:
             result = self.Operator.getNodeInfoByType(nodeName, sensorType)
@@ -191,7 +184,7 @@ class Hass (object):
         except:
             logging.error("HASS--get %s info from %s fail" %(sensorType,nodeName))
 
-    def addInstance(self, clusterId, instanceId):
+    def addInstance(self, clusterId, instanceId, send = True):
         try:
             result = ClusterManager.addInstance(clusterId, instanceId)
             logging.info("HASS--add instance success.")
@@ -199,7 +192,7 @@ class Hass (object):
         except:
             logging.error("HASS--add Instance fail")
 
-    def deleteInstance(self, clusterId, instanceId):
+    def deleteInstance(self, clusterId, instanceId,send = True):
         try:
             result = ClusterManager.deleteInstance(clusterId, instanceId)
             logging.info("HASS--delete instance success")
@@ -207,7 +200,7 @@ class Hass (object):
         except:
             logging.error("HASS--delete instance fail")
 
-    def listInstance(self, clusterId) :
+    def listInstance(self, clusterId,send = True) :
         try:
             result = ClusterManager.listInstance(clusterId)
             logging.info("HASS-list instance success")
