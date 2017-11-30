@@ -124,7 +124,7 @@ class Cluster(ClusterInterface):
 				self.deleteInstance(info[0])
 			elif info[2] not in self.getAllNodeStr():
 				self.deleteInstance(info[0])
-			elif :
+			else :
 				ret.append(info)
 			if send_flag == True:self.sendUpdateInstance(instance.host)
 		return ret
