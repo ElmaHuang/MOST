@@ -202,7 +202,7 @@ class Hass (object):
 
     def listInstance(self, clusterId,send = True) :
         try:
-            result = ClusterManager.listInstance(clusterId)
+            result = ClusterManager.listInstance(clusterId,send)
             logging.info("HASS-list instance success")
             return result
         except :

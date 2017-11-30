@@ -114,7 +114,7 @@ class Cluster(ClusterInterface):
 		for instance in protected_instance_list:
 			self.deleteInstance(instance.id)
 	#list Instance
-	def getAllInstanceInfo(self):
+	def getAllInstanceInfo(self,send_flag):
 		ret = []
 		#instance_list = self.getProtectedInstanceList()
 		for instance in self.instance_list[:]:
@@ -124,9 +124,9 @@ class Cluster(ClusterInterface):
 				self.deleteInstance(info[0])
 			elif info[2] not in self.getAllNodeStr():
 				self.deleteInstance(info[0])
-			else:
+			elif :
 				ret.append(info)
-			self.sendUpdateInstance(instance.host)
+			if send_flag == True:self.sendUpdateInstance(instance.host)
 		return ret
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):

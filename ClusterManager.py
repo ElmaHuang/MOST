@@ -171,12 +171,12 @@ class ClusterManager():
 		return cluster.getProtectedInstanceList()
 	'''
 	@staticmethod
-	def listInstance(cluster_id):
+	def listInstance(cluster_id,send):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
 		try:
-			instance_list= cluster.getAllInstanceInfo()
+			instance_list= cluster.getAllInstanceInfo(send)
 		#if not instance_list:
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
 			result = {"code":"0","instanceList":instance_list}
