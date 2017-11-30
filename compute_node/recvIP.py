@@ -23,16 +23,9 @@ class recvIPThread(threading.Thread):
                 self.getInstanceFromController()
 
     def getInstanceFromController(self):
-        host_instance = []
-        cluster_list = self.server.listCluster()
-        for cluster in cluster_list:
-            clusterId = cluster[0]
-            instance_list = self.server.listInstance(clusterId)["instanceList"]
-            for instance in instance_list:
-                if instance[2] == self.host:
-                    print self.host +"="+instance[2]
-                    host_instance.append(instance)
-        return host_instance
+        host_instance  = self.server.getHAInstanceByNode(self.host)
+        for instance in host_instance:
+            print instance
 
     def installWatchdog(self):
         pass

@@ -176,6 +176,13 @@ class Hass (object):
         except:
             logging.error("HASS--get All Info from %s fail"%nodeName)
 
+    def getHAInstanceByNode(self,node):
+        try:
+            instance = ClusterManager.getInstanceByNode(node)
+            return instance
+        except:
+            logging.error("HASS--compute node get controller instance fail")
+
     def getNodeInfoByType(self, nodeName, sensorType):
         try:
             result = self.Operator.getNodeInfoByType(nodeName, sensorType)
