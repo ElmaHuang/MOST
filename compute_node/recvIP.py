@@ -11,7 +11,7 @@ class recvIPThread(threading.Thread):
         self.s.listen(5)
         self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
-        self.host = subprocess.check_output(['hostname'])
+        self.host = subprocess.check_output(['hostname']).strip()
 
     def run(self):
         while True:
@@ -28,7 +28,7 @@ class recvIPThread(threading.Thread):
         for cluster in cluster_list:
             clusterId = cluster[0]
             instance_list = self.server.listInstance(clusterId,False)["instanceList"]
-            print "instacne listtt:",instance_list
+            print "HA instacne list:",instance_list
             for instance in instance_list:
                 if instance[2] == self.host:
                     host_instance.append(instance)

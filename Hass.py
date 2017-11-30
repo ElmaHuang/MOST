@@ -184,7 +184,7 @@ class Hass (object):
         except:
             logging.error("HASS--get %s info from %s fail" %(sensorType,nodeName))
 
-    def addInstance(self, clusterId, instanceId, send = True):
+    def addInstance(self, clusterId, instanceId):
         try:
             result = ClusterManager.addInstance(clusterId, instanceId)
             logging.info("HASS--add instance success.")
@@ -192,7 +192,7 @@ class Hass (object):
         except:
             logging.error("HASS--add Instance fail")
 
-    def deleteInstance(self, clusterId, instanceId,send = True):
+    def deleteInstance(self, clusterId, instanceId):
         try:
             result = ClusterManager.deleteInstance(clusterId, instanceId)
             logging.info("HASS--delete instance success")
