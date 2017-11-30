@@ -27,7 +27,7 @@ class recvIPThread(threading.Thread):
         self.clearlog()
         instance_list = self.getInstanceFromController()
         for instance in instance_list[:]:
-            ha_vm = "id:"+str(instance[0])+" name:"+str(instance[1])+" host:"+str(instance[2])+" status:"+str(instance[3])+" network:"+str(instance[4])
+            ha_vm = "id:"+str(instance[0])+" name:"+str(instance[1])+" host:"+str(instance[2])+" status:"+str(instance[3])+" network:"+str(instance[4])+"\n"
             self.writelog(ha_vm)
 
     def getInstanceFromController(self):

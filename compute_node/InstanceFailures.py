@@ -10,7 +10,7 @@ class InstanceFailure(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         #self.host = host
-        self.clearlog()
+        self.recovery_vm = RecoveryInstance()
         self.fail_instance = []
         '''
         while True:
@@ -29,6 +29,8 @@ class InstanceFailure(threading.Thread):
                 libvirt_connect.domainEventRegister(self._checkVMState,None)
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
                 while True:
+                    if self.fail_instance !=[]:
+                        self.getHAInstance()
                     if not libvirt_connect.isAlive():
                         break
                     time.sleep(5)
@@ -79,14 +81,28 @@ class InstanceFailure(threading.Thread):
         stateString = InstanceEvent.Event_string
         return stateString[event][detail]
 
-    def clearlog(self):
-        with open('./instance_fail.log', 'w'): pass
-        #with open('./log/sucess.log', 'w'): pass
+    def getHAInstance(self):
+        ha_instance = self.readlog()
+        for instance in ha_instance[:]:
+            for fail_vm in self.fail_instance:
+                if fail_vm[0] not in instance:
+                    ha_instance.remove(instance)
+        if ha_instance != []:
+            for fail_instance in ha_instance[:]:
+                try:
+                    result = self.recovery_vm.rebootInstance(fail_instance)
+                    if result != True:
+                        raise Exception("reset vm fail")
+                except Exception as e:
+                    print str(e)
 
-    def writelog(self,str):
-        with open('./instance_fail.log', 'a') as f:
-            f.write(str)
-            f.close()
+    def readlog(self):
+        ha_instance = []
+        with open('./HAInstance', 'r') as ff:
+            for lines in ff:
+                instance = lines.split(" ")
+                ha_instance.append(instance)
+        ff.close()
 
 if __name__ == '__main__':
     a = InstanceFailure()
