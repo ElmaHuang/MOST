@@ -192,6 +192,7 @@ class ClusterManager():
 				info = instance.getInfo()
 				if info[2] == node:
 					instance_list.append(info)
+		return instance_list
 
 	@staticmethod
 	def _addToClusterList(cluster_name , cluster_id = None):
