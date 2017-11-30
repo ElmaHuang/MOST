@@ -11,6 +11,7 @@ class InstanceFailure(threading.Thread):
         threading.Thread.__init__(self)
         #self.host = host
         self.clearlog()
+        self.fail_instance = []
         '''
         while True:
             self._startDetection()
@@ -29,7 +30,7 @@ class InstanceFailure(threading.Thread):
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
                 while True:
                     if not libvirt_connect.isAlive():
-                        return
+                        break
                     time.sleep(5)
             except Exception as e:
                 print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
@@ -59,8 +60,7 @@ class InstanceFailure(threading.Thread):
         event_string = self.transformDetailToString(event,detail)
         failedString = InstanceEvent.Event_failed
         if event_string in failedString:
-            self.writelog(domain.name())
-        #return True
+            self.fail_instance.append([domain.name(),domain.ID(),event_string])
 
     def _checkNetwork(self):
         pass

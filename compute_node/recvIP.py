@@ -1,6 +1,7 @@
 import threading
 import socket
 import xmlrpclib
+import subprocess
 
 class recvIPThread(threading.Thread):
     def __init__(self):
@@ -10,6 +11,7 @@ class recvIPThread(threading.Thread):
         self.s.listen(5)
         self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
+        self.host = subprocess.check_output(['hostname'])
 
     def run(self):
         while True:
@@ -28,6 +30,7 @@ class recvIPThread(threading.Thread):
             instance_list = self.server.listInstance(clusterId)["instanceList"]
             for instance in instance_list:
                 if instance[2] == self.host:
+                    print self.host +"="+instance[2]
                     host_instance.append(instance)
         return host_instance
 
