@@ -16,15 +16,6 @@ class InstanceFailure(threading.Thread):
             self._startDetection()
             time.sleep(2)
         '''
-    '''
-    def run(self):
-        #all instance
-        while(True):
-            self.clearlog()
-            #for instance in all_nstance:
-            result = self.check_instance(instance)
-            self.writelog(result)
-    '''
 
     def __virEventLoopNativeRun(self):
         while True:
@@ -36,11 +27,15 @@ class InstanceFailure(threading.Thread):
             try:
                 libvirt_connect.domainEventRegister(self._checkVMState,None)
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
+                while True:
+                    if not libvirt_connect.isAlive():
+                        return
+                    time.sleep(5)
             except Exception as e:
                 print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
             finally:
                 libvirt_connect.close()
-                time.sleep(5)
+                #time.sleep(5)
 
     def createDetectionThread(self):
         try:
