@@ -4,7 +4,7 @@ import sys
 import ConfigParser
 import xmlrpclib
 import time
-from recvIP import recvIPThread
+from recvInfoFromController import recvIPThread
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
 
