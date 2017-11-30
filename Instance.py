@@ -8,7 +8,6 @@ class Instance(object):
 		self.id = id
 		self.name = name
 		self.host = host
-		self.port = 7878
 		self.network = None
 		self.status=None
 		self.nova_client = NovaClient.getInstance()

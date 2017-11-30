@@ -185,13 +185,15 @@ class ClusterManager():
 			logging.error("ClusterManager--listInstance,getInstanceList fail")
 
 	@staticmethod
-	def getInstanceByNode(self,node):
-		instance_list = []
+	def getInstanceByNode(node):
+		#instance_list = []
 		for id, cluster in ClusterManager._cluster_dict.iteritems():
-			for instance in cluster.instance_list:
-				info = instance.getInfo()
-				if info[2] == node:
-					instance_list.append(info)
+			instance_list = cluster.getAllInstanceInfo()
+			print instance_list
+			#for instance in instance_list:
+			#	info = instance.getInfo()
+			#	if info[2] == node:
+			#		instance_list.append(info)
 		return instance_list
 
 	@staticmethod

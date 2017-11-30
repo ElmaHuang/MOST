@@ -113,7 +113,6 @@ class Cluster(ClusterInterface):
 		protected_instance_list = self.getProtectedInstanceListByNode(node)
 		for instance in protected_instance_list:
 			self.deleteInstance(instance.id)
-
 	#list Instance
 	def getAllInstanceInfo(self):
 		ret = []
