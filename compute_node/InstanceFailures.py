@@ -122,7 +122,7 @@ class InstanceFailure(threading.Thread):
             str = str.strip(" ")
             str = str.split(":")
             for c in str :
-                if c ==" ":
+                if c =="":
                     str.remove(c)
             instance.append(str)
         print instance
