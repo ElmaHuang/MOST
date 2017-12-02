@@ -1,14 +1,14 @@
 import libvirt
 
 Event_string = (
-        ( "Added", "Updated" ),
-        ( "Removed" ),
-        ( "Booted", "Migrated", "Restored", "Snapshot", "Wakeup" ),
-        ( "Paused", "Migrated", "IOError", "Watchdog", "Restored", "Snapshot" ),
+        ("Added", "Updated"),
+        ("Removed" ),
+        ("Booted","Migrated","Restored","Snapshot","Wakeup"),
+        ( "Paused","Migrated","IOError","Watchdog", "Restored", "Snapshot" ),
         ( "Unpaused", "Migrated", "Snapshot" ),
         ( "Shutdown", "Destroyed", "Crashed", "Migrated", "Saved", "Failed", "Snapshot"),
-        ( "Finished" )
-		)
+        ( "Finished")
+)
 
 Event_failed = (Event_string[5][2],Event_string[5][5])
 
