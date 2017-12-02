@@ -115,10 +115,11 @@ class InstanceFailure(threading.Thread):
     def _splitString(self,string):
         instance = []
         #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
-        inst = string.split(" , ")
+        inst = re.split('[\[\]\']', '', string)
         #return instance
         for str in inst:
-            str.strip(" ' ")
+            print "ele:", str,"\n"
+            #str.strip(" ' ")
         print inst
 
 if __name__ == '__main__':
