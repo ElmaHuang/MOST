@@ -85,6 +85,7 @@ class InstanceFailure(threading.Thread):
     def getHAInstance(self):
         print "get ha vm"
         ha_instance = self.readlog()
+        print "read list :",ha_instance
         for instance in ha_instance[:]:
             for fail_vm in self.fail_instance:
                 if fail_vm[0] not in instance:
@@ -105,6 +106,7 @@ class InstanceFailure(threading.Thread):
                 instance = lines.split(" ")
                 ha_instance.append(instance)
         ff.close()
+        return ha_instance
 
 if __name__ == '__main__':
     a = InstanceFailure()
