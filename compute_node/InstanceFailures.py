@@ -86,7 +86,7 @@ class InstanceFailure(threading.Thread):
         print "get ha vm"
         ha_instance = self.readlog()
         print "read list :",ha_instance
-        ha_instance = ha_instance.split()
+        #ha_instance = ha_instance.split()
         for instance in ha_instance[:]:
             for fail_vm in self.fail_instance:
                 if fail_vm[0] not in instance:
@@ -104,11 +104,11 @@ class InstanceFailure(threading.Thread):
         ha_instance = []
         with open('./HAInstance', 'r') as ff:
             for lines in ff:
-                instance = lines.split("\n")
-                ha_instance.append(instance)
-        #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}\n"]]
-        #for instance in  ha_instance:
-            #instance = instance.split(",")
+                instances = lines.split("\n")
+                #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}\n"]]
+                for instance in  instances:
+                    instance = self._splitString(instance)
+        ha_instance.append(instance)
         ff.close()
         return ha_instance
 
@@ -125,9 +125,18 @@ class InstanceFailure(threading.Thread):
                 if c =="":
                     str.remove(c)
             if str != []:instance.append(str)
-        print instance
+            #[
+            # ['id', '8f3340f3-0c48-4333-98e3-96f62df41f21'],
+            # ['name', 'instance-00000346'],
+            # ['host', 'compute3'],
+            # ['status', 'ACTIVE'],
+            # ['network', 'selfservice'],
+            # ['192.168.1.8'],
+            # ['192.168.0.212']
+            # ]
+        return instance
 
 if __name__ == '__main__':
     a = InstanceFailure()
     a.start()
-    a._splitString("[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', \"network:{'selfservice':\", \"['192.168.1.8',\", \"'192.168.0.212']}")
+    #a._splitString("[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', \"network:{'selfservice':\", \"['192.168.1.8',\", \"'192.168.0.212']}")
