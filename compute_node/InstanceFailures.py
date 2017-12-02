@@ -31,12 +31,13 @@ class InstanceFailure(threading.Thread):
             except Exception as e:
                 print "failed to run detection method , please check libvirt is alive.exception :",str(e)
             finally:
-                while self.fail_instance == [] and not libvirt_connect.isAlive():
-                   time.sleep(5)
-                #fail_instance is not None
-                if self.fail_instance != []:
-                    libvirt_connect.close()
-                    self.getHAInstance()
+                while True:
+                    time.sleep(5)
+                    if self.fail_instance != []:
+                        libvirt_connect.close()
+                        self.getHAInstance()
+                    if not libvirt_connect.isAlive():
+                        break
                 #time.sleep(5)
 
     def createDetectionThread(self):
