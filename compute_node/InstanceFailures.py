@@ -23,9 +23,9 @@ class InstanceFailure(threading.Thread):
             libvirt.virEventRunDefaultImpl()
 
     def run(self):
-        libvirt_connect = self.createDetectionThread()
         while True:
             try:
+                libvirt_connect = self.createDetectionThread()
                 libvirt_connect.domainEventRegister(self._checkVMState,None)
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
                 while True:
@@ -61,9 +61,10 @@ class InstanceFailure(threading.Thread):
         print "domain name :",domain.name()," domain id :",domain.ID(),"event:",event,"detail:",detail
         event_string = self.transformDetailToString(event,detail)
         failedString = InstanceEvent.Event_failed
+        print "event string :",event_string
         if event_string in failedString:
             self.fail_instance.append([domain.name(),domain.ID(),event_string])
-
+        print "fail instance :",self.fail_instance
     def _checkNetwork(self):
         pass
         #for instance in self.instance_list:
