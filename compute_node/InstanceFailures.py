@@ -109,7 +109,7 @@ class InstanceFailure(threading.Thread):
                 for instance in instances:
                     #id:219046ce-1c1e-4a73-ac53-4cacafd08e79 name:instance-00000342 host:compute3 status:ACTIVE network:{'provider': ['192.168.0.207']}
                     instance = self._splitString(instance)
-                    ha_instance.append(instance)
+                    if instance != []:ha_instance.append(instance)
         ff.close()
         return ha_instance
 
