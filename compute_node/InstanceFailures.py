@@ -73,9 +73,9 @@ class InstanceFailure(threading.Thread):
 
     def _checkVMWatchdog(self, connect,domain, action, opaque):
         print "domain:",domain.name()," ",domain.ID(),"action:",action
-        #watchdogString = self.config.get("vm_watchdog_event","Event_watchdog_action")
-        #if action in watchdogString:
-            #self.writelog(domain.name())
+        watchdogString  = InstanceEvent.Event_watchdog_action
+        if action in watchdogString:
+            self.fail_instance.append([domain.name(),domain.ID(),watchdogString])
 
     def transformDetailToString(self,event,detail):
         stateString = InstanceEvent.Event_string
