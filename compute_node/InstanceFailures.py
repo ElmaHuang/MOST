@@ -36,7 +36,9 @@ class InstanceFailure(threading.Thread):
                     if self.fail_instance != []:
                         #libvirt_connect.close()
                         try:
-                            self.getHAInstance()
+                            result = self.getHAInstance()
+                            if not result:
+                                print "recovery "+str(self.fail_instance) +"fail or the instance is not HA instance."
                         except Exception as e :
                             print str(e)
                         finally:
@@ -70,6 +72,7 @@ class InstanceFailure(threading.Thread):
         if event_string in failedString:
             self.fail_instance.append([domain.name(),domain.ID(),event_string])
         print "fail instance :",self.fail_instance
+
     def _checkNetwork(self):
         pass
         #for instance in self.instance_list:
@@ -95,7 +98,7 @@ class InstanceFailure(threading.Thread):
         for instance in ha_instance[:]:
             ha_name = ""
             for info in instance:
-                if info[0] == 'name':
+                if "name" in info[0]:
                     ha_name = info[1]
             for fail_vm in self.fail_instance:
                 if fail_vm[0] != ha_name:
@@ -104,10 +107,11 @@ class InstanceFailure(threading.Thread):
             for fail_instance in ha_instance[:]:
                 try:
                     result = self.recovery_vm.rebootInstance(fail_instance)
-                    if result != True:
-                        raise Exception("reset vm fail")
+                    return result
                 except Exception as e:
                     print str(e)
+        else:#fail instance is not HA instance
+            return True
 
     def readlog(self):
         ha_instance = []
