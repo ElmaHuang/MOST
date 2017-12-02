@@ -106,7 +106,8 @@ class InstanceFailure(threading.Thread):
             for lines in ff:
                 instances = lines.split("\n")
                 #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}\n"]]
-                for instance in  instances:
+                for instance in instances:
+                    #id:219046ce-1c1e-4a73-ac53-4cacafd08e79 name:instance-00000342 host:compute3 status:ACTIVE network:{'provider': ['192.168.0.207']}
                     instance = self._splitString(instance)
                     ha_instance.append(instance)
         ff.close()
@@ -114,14 +115,12 @@ class InstanceFailure(threading.Thread):
 
     def _splitString(self,string):
         instance = []
-        #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
         inst = re.sub('[\[\]{}\'"]', '', string)
         #['id:8f3340f3-0c48-4333-98e3-96f62df41f21', ' name:instance-00000346', ' host:compute3', ' status:ACTIVE', ' network:selfservice:', ' 192.168.1.8', '', ' 192.168.0.212']
         inst = "".join(inst)
-        inst = inst.split(",")
+        inst = inst.split(" ")
         for str in inst:
-            str = str.strip(" ")
-            str = str.split(":")
+            str = re.split(r'[:\s]\s*', str)
             for c in str :
                 if c =="":
                     str.remove(c)
