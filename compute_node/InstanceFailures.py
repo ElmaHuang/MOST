@@ -28,16 +28,15 @@ class InstanceFailure(threading.Thread):
                 libvirt_connect = self.createDetectionThread()
                 libvirt_connect.domainEventRegister(self._checkVMState,None)
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
-                time.sleep(5)
             except Exception as e:
                 print "failed to run detection method , please check libvirt is alive.exception :",str(e)
             finally:
-                while True:
-                    if self.fail_instance != []:
-                        self.getHAInstance()
-                    if not libvirt_connect.isAlive():
-                        break
-                libvirt_connect.close()
+                while self.fail_instance == [] and not libvirt_connect.isAlive():
+                   time.sleep(5)
+                #fail_instance is not None
+                if self.fail_instance != []:
+                    libvirt_connect.close()
+                    self.getHAInstance()
                 #time.sleep(5)
 
     def createDetectionThread(self):
