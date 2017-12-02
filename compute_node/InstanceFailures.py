@@ -93,6 +93,7 @@ class InstanceFailure(threading.Thread):
         print "read list :",ha_instance
         #ha_instance = ha_instance.split()
         for instance in ha_instance[:]:
+            ha_name = ""
             for info in instance:
                 if info[0] == 'name':
                     ha_name = info[1]
