@@ -124,7 +124,7 @@ class InstanceFailure(threading.Thread):
             for c in str :
                 if c =="":
                     str.remove(c)
-            instance.append(str)
+            if str != []:instance.append(str)
         print instance
 
 if __name__ == '__main__':
