@@ -34,8 +34,13 @@ class InstanceFailure(threading.Thread):
                 while True:
                     time.sleep(5)
                     if self.fail_instance != []:
-                        libvirt_connect.close()
-                        self.getHAInstance()
+                        #libvirt_connect.close()
+                        try:
+                            self.getHAInstance()
+                        except Exception as e :
+                            print str(e)
+                        finally:
+                            self.fail_instance = []
                     elif not libvirt_connect.isAlive():
                         break
                 #time.sleep(5)
@@ -88,8 +93,11 @@ class InstanceFailure(threading.Thread):
         print "read list :",ha_instance
         #ha_instance = ha_instance.split()
         for instance in ha_instance[:]:
+            for info in instance:
+                if info[0] == 'name':
+                    ha_name = info[1]
             for fail_vm in self.fail_instance:
-                if fail_vm[0] not in instance:
+                if fail_vm[0] != ha_name:
                     ha_instance.remove(instance)
         if ha_instance != []:
             for fail_instance in ha_instance[:]:
