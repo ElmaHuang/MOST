@@ -1,5 +1,5 @@
 import libvirt
-import socket
+import re
 import threading
 import time
 # import ConfigParser
@@ -115,7 +115,7 @@ class InstanceFailure(threading.Thread):
     def _splitString(self,string):
         instance = []
         #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
-        instance = string.split(" ' ")
+        instance = re.split(r'( \' |\s)\s*', string)
         return instance
 
 if __name__ == '__main__':
