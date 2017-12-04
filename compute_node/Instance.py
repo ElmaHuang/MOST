@@ -19,8 +19,11 @@ class Instance(object):
 
     def update_network(self):
         #{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
-        self.network_self = self.ha_instance[4]["selfservice"]
-        self.network_self = self.ha_instance[4]["provider"]
+        network = self.ha_instance[4]
+        if "selfservice" in network:
+            self.network_self = network["selfservice"]
+        if "provider" in network:
+            self.network_self = self.ha_instance[4]["provider"]
         #self.network
 
 if __name__ == '__main__':
