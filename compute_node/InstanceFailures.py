@@ -115,7 +115,7 @@ class InstanceFailure(threading.Thread):
 
     def readlog(self):
         ha_instance = []
-        with open('./HAInstance', 'r') as ff:
+        with open('./HAInstance.py', 'r') as ff:
             for lines in ff:
                 instances = lines.split("\n")
                 #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}\n"]]

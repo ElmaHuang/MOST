@@ -1,6 +1,6 @@
 import subprocess
 
-class RecoveryInstance():
+class RecoveryInstance(object):
     def __init__(self):
         pass
 

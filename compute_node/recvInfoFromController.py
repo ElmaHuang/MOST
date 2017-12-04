@@ -2,6 +2,9 @@ import threading
 import socket
 import xmlrpclib
 import subprocess
+from Instance import Instance
+from HAInstance import HAInstance
+
 
 class recvIPThread(threading.Thread):
     def __init__(self):
@@ -23,13 +26,6 @@ class recvIPThread(threading.Thread):
             if d == "update instance":
                 self.updateHAInstance()
 
-    def updateHAInstance(self):
-        self.clearlog()
-        instance_list = self.getInstanceFromController()
-        for instance in instance_list[:]:
-            ha_vm = "id:"+str(instance[0])+" name:"+str(instance[1])+" host:"+str(instance[2])+" status:"+str(instance[3])+" network:"+str(instance[4])+"\n"
-            self.writelog(ha_vm)
-
     def getInstanceFromController(self):
         host_instance = []
         cluster_list = self.server.listCluster()
@@ -42,11 +38,22 @@ class recvIPThread(threading.Thread):
                     host_instance.append(instance)
         return host_instance
 
+    def updateHAInstance(self):
+        #self.clearlog()
+        instance_list = self.getInstanceFromController()
+        HAInstance.init()
+        for instance in instance_list[:]:
+            # [self.id, self.name, self.host, self.status, self.network]
+            ha_vm = Instance(ha_instance=instance)
+            HAInstance.addInstance(ha_vm)
+            #self.writelog(ha_vm)
+    '''
     def clearlog(self):
-        with open('./HAInstance', 'w'): pass
+        with open('./HAInstance.py', 'w'): pass
         #with open('./log/sucess.log', 'w'): pass
 
     def writelog(self,str):
-        with open('./HAInstance', 'a') as f:
+        with open('./HAInstance.py', 'a') as f:
             f.write(str)
             f.close()
+    '''
