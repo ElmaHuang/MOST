@@ -96,10 +96,10 @@ class InstanceFailure(threading.Thread):
         ha_instance = HAInstance.getInstanceList()
         print "read list :",ha_instance
         #check instance is protected
-        for instance in ha_instance:
+        for id,instance in ha_instance.iteritems():
             for fail_vm in self.fail_instance:
                 if fail_vm[0] != instance.name:
-                    del ha_instance[instance.id]
+                    del ha_instance[id]
         #any instance shoule be recovery
         if ha_instance != {}:
             for fail_instance in ha_instance:
@@ -147,7 +147,7 @@ class InstanceFailure(threading.Thread):
             # ]
         return instance
     '''
-    
+
 if __name__ == '__main__':
     a = InstanceFailure()
     a.start()
