@@ -104,7 +104,7 @@ class InstanceFailure(threading.Thread):
         if ha_instance != {}:
             for fail_instance_id in ha_instance:
                 try:
-                    result = self.recovery_vm.rebootInstance(fail_instance_id)
+                    result = self.recovery_vm.hardRebootInstance(fail_instance_id)
                     return result
                 except Exception as e:
                     print str(e)

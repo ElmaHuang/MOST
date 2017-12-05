@@ -47,6 +47,18 @@ class NovaClient(object):
     def getVM(self, id):
         return NovaClient._helper.servers.get(id)
 
+    def getInstanceState(self, instance_id):
+        instance = self.getVM(instance_id)
+        return getattr(instance, "status")
+
+    def hardReboot(self,id):
+        instance = self.getVM(id)
+        NovaClient._helper.servers.reboot(instance,reboot_type = 'HARD')
+
+    def softReboot(self,id):
+        instance = self.getVM(id)
+        NovaClient._helper.servers.reboot(instance,reboot_type='SOFT')
+
     def getAllInstanceList(self):
         return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
@@ -64,5 +76,6 @@ class NovaClient(object):
 
 if __name__ == "__main__":
     a = NovaClient.getInstance()
+    a.hardReboot("219046ce-1c1e-4a73-ac53-4cacafd08e79")
 
 
