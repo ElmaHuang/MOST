@@ -12,13 +12,5 @@ class HAInstance():
         HAInstance.instance_list[id] = ha_instance
 
     @staticmethod
-    def updateInstance():
-        if HAInstance.instance_list != {}:
-            for obj in HAInstance.instance_list[:]:
-                del obj
-
-    @staticmethod
     def getInstanceList():
         return HAInstance.instance_list
-
-

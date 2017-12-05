@@ -96,21 +96,21 @@ class InstanceFailure(threading.Thread):
         ha_instance = HAInstance.getInstanceList()
         print "read list :",ha_instance
         #check instance is protected
-        for instance in ha_instance[:]:
+        for instance in ha_instance:
             for fail_vm in self.fail_instance:
                 if fail_vm[0] != instance.name:
-                    ha_instance.remove(instance)
+                    del ha_instance[instance.id]
         #any instance shoule be recovery
-        if ha_instance != []:
-            for fail_instance in ha_instance[:]:
+        if ha_instance != {}:
+            for fail_instance in ha_instance:
                 try:
-                    result = self.recovery_vm.rebootInstance(fail_instance)
+                    result = self.recovery_vm.rebootInstance(fail_instance.id)
                     return result
                 except Exception as e:
                     print str(e)
         else:#fail instance is not HA instance
             return True
-
+    '''
     def readlog(self):
         ha_instance = []
         with open('./HAInstance.py', 'r') as ff:
@@ -146,7 +146,8 @@ class InstanceFailure(threading.Thread):
             # ['192.168.0.212']
             # ]
         return instance
-
+    '''
+    
 if __name__ == '__main__':
     a = InstanceFailure()
     a.start()
