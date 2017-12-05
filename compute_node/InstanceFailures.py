@@ -5,6 +5,7 @@ import time
 # import ConfigParser
 import InstanceEvent
 from RecoveryInstance import RecoveryInstance
+from HAInstance import HAInstance
 
 class InstanceFailure(threading.Thread):
     def __init__(self):
@@ -92,17 +93,14 @@ class InstanceFailure(threading.Thread):
 
     def getHAInstance(self):
         print "get ha vm"
-        ha_instance = self.readlog()
+        ha_instance = HAInstance.getInstanceList()
         print "read list :",ha_instance
-        #ha_instance = ha_instance.split()
+        #check instance is protected
         for instance in ha_instance[:]:
-            ha_name = ""
-            for info in instance:
-                if "name" in info[0]:
-                    ha_name = info[1]
             for fail_vm in self.fail_instance:
-                if fail_vm[0] != ha_name:
+                if fail_vm[0] != instance.name:
                     ha_instance.remove(instance)
+        #any instance shoule be recovery
         if ha_instance != []:
             for fail_instance in ha_instance[:]:
                 try:

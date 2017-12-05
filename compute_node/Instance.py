@@ -27,9 +27,6 @@ class Instance(object):
             self.network_provider = self.ha_instance[4]["provider"]
         #self.network
 
-    def kill(self):
-        del self
-
 if __name__ == '__main__':
     a = Instance()
 

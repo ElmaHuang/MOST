@@ -41,7 +41,7 @@ class recvIPThread(threading.Thread):
     def updateHAInstance(self):
         #self.clearlog()
         instance_list = self.getInstanceFromController()
-        HAInstance.init()
+        HAInstance.updateInstance()
         for instance in instance_list[:]:
             # [self.id, self.name, self.host, self.status, self.network]
             vm = Instance(ha_instance=instance)
