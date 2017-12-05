@@ -10,9 +10,9 @@ class RecoveryInstance(object):
         #instance_name = ""
         # reboot vm
         instance = self.getHAInstance(fail_instance_id)
-        result = self.nova_client.hardReboot(instance.id)
+        self.nova_client.hardReboot(instance.id)
         #command = "virsh reset "+ instance.name
-        state = self.nova_client.getgetInstanceState(instance.id)
+        state = self.nova_client.getInstanceState(instance.id)
         if "ACTIVE" in state:
             return True
         else:
@@ -28,8 +28,7 @@ class RecoveryInstance(object):
         instance = self.getHAInstance(id)
         ip = instance.network_provider
         try:
-            response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
-                                           universal_newlines=True)
+            response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,universal_newlines=True)
             return True
         except subprocess.CalledProcessError:
             return False
