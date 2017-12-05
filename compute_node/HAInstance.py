@@ -14,3 +14,7 @@ class HAInstance():
     @staticmethod
     def getInstanceList():
         return HAInstance.instance_list
+
+    @staticmethod
+    def getInstance(id):
+        return HAInstance.instance_list[id]

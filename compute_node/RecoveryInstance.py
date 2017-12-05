@@ -1,17 +1,16 @@
 import subprocess
+from HAInstance import HAInstance
 
 class RecoveryInstance(object):
     def __init__(self):
         pass
 
-    def rebootInstance(self,fail_instance):
-        instance_name = ""
+    def rebootInstance(self,fail_instance_id):
+        #instance_name = ""
         # reboot vm
-        for info in fail_instance:
-            if "name" in info[0]:
-                instance_name = info[1]
-                #instance_name = instance_name[-1]
-        command = "virsh reset "+ instance_name
+
+        instance = HAInstance.getInstance(fail_instance_id)
+        command = "virsh reset "+ instance.name
         response = subprocess.check_output(command, shell=True)
         if "reset" in response:
             return True

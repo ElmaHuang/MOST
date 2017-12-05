@@ -98,13 +98,13 @@ class InstanceFailure(threading.Thread):
         #check instance is protected
         for id,instance in ha_instance.iteritems():
             for fail_vm in self.fail_instance:
-                if fail_vm[0] != instance.name:
+                if instance.name not in fail_vm[0]:
                     del ha_instance[id]
         #any instance shoule be recovery
         if ha_instance != {}:
-            for fail_instance in ha_instance:
+            for fail_instance_id in ha_instance:
                 try:
-                    result = self.recovery_vm.rebootInstance(fail_instance.id)
+                    result = self.recovery_vm.rebootInstance(fail_instance_id)
                     return result
                 except Exception as e:
                     print str(e)
