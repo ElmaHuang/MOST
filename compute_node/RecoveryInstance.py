@@ -33,7 +33,8 @@ class RecoveryInstance(object):
 
     def softReboot(self,fail_instance_name):
         instance = self.getHAInstance(fail_instance_name)
-        self.softReboot(instance.id)
+        self.nova_client.softReboot(instance.id)
+        self.checkState(instance.id)
 
     def pingInstance(self,name):
         instance = self.getHAInstance(name)
