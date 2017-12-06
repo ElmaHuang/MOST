@@ -16,5 +16,7 @@ class HAInstance():
         return HAInstance.instance_list
 
     @staticmethod
-    def getInstance(id):
-        return HAInstance.instance_list[id]
+    def getInstance(name):
+        for id,instance in HAInstance.instance_list.iteritems():
+            if instance.name == name:
+                return instance
