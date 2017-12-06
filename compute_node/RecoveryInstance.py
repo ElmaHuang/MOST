@@ -21,9 +21,6 @@ class RecoveryInstance(object):
     def softReboot(self):
         pass
 
-    def stopInstance(self):
-        pass
-
     def pingInstance(self,id):
         instance = self.getHAInstance(id)
         ip = instance.network_provider

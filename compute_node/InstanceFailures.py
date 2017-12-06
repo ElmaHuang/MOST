@@ -96,7 +96,8 @@ class InstanceFailure(threading.Thread):
         ha_instance = HAInstance.getInstanceList()
         print "read list :",ha_instance
         #check instance is protected
-        for id,instance in ha_instance.iteritems():
+        instance_list = {k: v for k,v in ha_instance.iteritems() if v}
+        for id,instance in instance_list.iteritems():
             for fail_vm in self.fail_instance:
                 if instance.name not in fail_vm[0]:
                     del ha_instance[id]
