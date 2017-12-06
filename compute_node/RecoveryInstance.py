@@ -26,15 +26,14 @@ class RecoveryInstance(object):
             self.pingInstance(self.vm_name)
 
     def hardRebootInstance(self,fail_instance_name):
-        #instance_name = ""
-        # reboot vm
         instance = self.getHAInstance(fail_instance_name)
         self.nova_client.hardReboot(instance.id)
         #command = "virsh reset "+ instance.name
         self.checkState(instance.id)
 
-    def softReboot(self):
-        pass
+    def softReboot(self,fail_instance_name):
+        instance = self.getHAInstance(fail_instance_name)
+        self.softReboot(instance.id)
 
     def pingInstance(self,name):
         instance = self.getHAInstance(name)

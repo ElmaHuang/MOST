@@ -29,7 +29,7 @@ class InstanceFailure(threading.Thread):
                 libvirt_connect = self.createDetectionThread()
                 libvirt_connect.domainEventRegister(self._checkVMState,None)
                 libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
-                self._checkNetwork()
+                #self._checkNetwork()
             except Exception as e:
                 print "failed to run detection method , please check libvirt is alive.exception :",str(e)
             finally:
@@ -71,10 +71,10 @@ class InstanceFailure(threading.Thread):
         recovery_type = "State"
         event_string = self.transformDetailToString(event,detail)
         failedString = InstanceEvent.Event_failed
-        print "event string :",event_string
+        print "state event string :",event_string
         if event_string in failedString:
             self.fail_instance.append([domain.name(),event_string,recovery_type])
-        print "fail instance :",self.fail_instance
+        print "fail instance--State:",self.fail_instance
 
     def _checkNetwork(self):
         recovery_type = "Network"
@@ -83,16 +83,18 @@ class InstanceFailure(threading.Thread):
             ip = instance.network_provider
             try:
                 response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
-                                                   universal_newlines=True)
+                                      universal_newlines=True)
             except subprocess.CalledProcessError:
                 self.fail_instance.append([instance.name,ip,recovery_type])
 
     def _checkVMWatchdog(self, connect,domain, action, opaque):
-        print "domain:",domain.name()," ",domain.ID(),"action:",action
+        print "domain name:",domain.name()," domain id:",domain.ID(),"action:",action
         recovery_type = "Watchdog"
         watchdogString  = InstanceEvent.Event_watchdog_action
+        print "watchdog event string:",watchdogString
         if action in watchdogString:
             self.fail_instance.append([domain.name(),watchdogString,recovery_type])
+        print "fail instance--WD:",self.fail_instance
 
     def transformDetailToString(self,event,detail):
         stateString = InstanceEvent.Event_string
@@ -117,6 +119,8 @@ class InstanceFailure(threading.Thread):
 
     def checkRecoveryVM(self,ha_instance):
         #find all fail_vm in self.fail_instacne is ha vm or not
+        if ha_instance == {}:
+            return
         for fail_vm in self.fail_instance[:]:
             for id,instance in ha_instance.iteritems():
                 if fail_vm[0] not in instance.name:
