@@ -79,7 +79,7 @@ class InstanceFailure(threading.Thread):
     def _checkNetwork(self):
         recovery_type = "Network"
         ha_instance = HAInstance.getInstanceList()
-        for id , instance in ha_instance.iteritems():
+        for id ,instance in ha_instance.iteritems():
             ip = instance.network_provider
             try:
                 response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
@@ -116,10 +116,9 @@ class InstanceFailure(threading.Thread):
             return True
 
     def checkRecoveryVM(self,ha_instance):
-        instance_list = {k: v for k,v in ha_instance.iteritems() if v}
         #find all fail_vm in self.fail_instacne is ha vm or not
         for fail_vm in self.fail_instance[:]:
-            for id,instance in instance_list.iteritems():
+            for id,instance in ha_instance.iteritems():
                 if fail_vm[0] not in instance.name:
                     self.fail_instance.remove(fail_vm)
 

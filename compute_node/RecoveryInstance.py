@@ -31,11 +31,7 @@ class RecoveryInstance(object):
         instance = self.getHAInstance(fail_instance_name)
         self.nova_client.hardReboot(instance.id)
         #command = "virsh reset "+ instance.name
-        state = self.nova_client.getInstanceState(instance.id)
-        if "ACTIVE" in state:
-            return True
-        else:
-            return False
+        self.checkState(instance.id)
 
     def softReboot(self):
         pass
@@ -52,3 +48,12 @@ class RecoveryInstance(object):
     def getHAInstance(self,name):
         ha_vm = HAInstance.getInstance(name)
         return ha_vm
+
+    def checkState(self,id,check_timeout = 60):
+        while check_timeout > 0:
+            state = self.nova_client.getInstanceState(id)
+            if "ACTIVE" in state:
+                return True
+            else:
+                check_timeout -=1
+        return False
