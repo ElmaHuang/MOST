@@ -41,6 +41,8 @@ class InstanceFailure(threading.Thread):
                             result = self.recoverInstance()
                             if not result:
                                 print "recovery "+str(self.fail_instance) +"fail or the instance is not HA instance."
+                            else:
+                                print "recovery "+str(self.fail_instance) +" success"
                         except Exception as e :
                             print str(e)
                         finally:
