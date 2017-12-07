@@ -76,7 +76,7 @@ class InstanceFailure(threading.Thread):
         print "state event string :",event_string
         if event_string in failedString:
             self.fail_instance.append([domain.name(),event_string,recovery_type])
-        print "fail instance--State:",self.fail_instance
+        #print "fail instance--State:",self.fail_instance
 
     def _checkNetwork(self):
         recovery_type = "Network"
@@ -93,10 +93,10 @@ class InstanceFailure(threading.Thread):
         print "domain name:",domain.name()," domain id:",domain.ID(),"action:",action
         recovery_type = "Watchdog"
         watchdogString  = InstanceEvent.Event_watchdog_action
-        print "watchdog event string:",watchdogString
+        #print "watchdog event string:",watchdogString
         if action in watchdogString:
             self.fail_instance.append([domain.name(),action,recovery_type])
-        print "fail instance--WD:",self.fail_instance
+        #print "fail instance--WD:",self.fail_instance
 
     def transformDetailToString(self,event,detail):
         stateString = InstanceEvent.Event_string
@@ -105,7 +105,7 @@ class InstanceFailure(threading.Thread):
     def recoverInstance(self):
         print "get ha vm"
         ha_instance = HAInstance.getInstanceList()
-        print "read list :",ha_instance
+        print "ha list :",ha_instance
         #check instance is protected
         self.checkRecoveryVM(ha_instance)
         #any instance shoule be recovery
