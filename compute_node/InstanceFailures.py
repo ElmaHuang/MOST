@@ -93,7 +93,7 @@ class InstanceFailure(threading.Thread):
         watchdogString  = InstanceEvent.Event_watchdog_action
         print "watchdog event string:",watchdogString
         if action in watchdogString:
-            self.fail_instance.append([domain.name(),watchdogString,recovery_type])
+            self.fail_instance.append([domain.name(),action,recovery_type])
         print "fail instance--WD:",self.fail_instance
 
     def transformDetailToString(self,event,detail):
