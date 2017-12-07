@@ -10,7 +10,7 @@ class recvIPThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.s = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
-        self.s.bind(('192.168.0.117',5001))
+        self.s.bind(('',5001))
         self.s.listen(5)
         self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
