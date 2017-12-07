@@ -17,10 +17,9 @@ class RecoveryInstance(object):
         self.findFailure()
 
     def findFailure(self):
-        if "State" in self.recovery_type:
+        if "State" or "Watchdog" in self.recovery_type:
             self.hardRebootInstance(self.vm_name)
-        elif "Watchdog" in self.recovery_type:
-            self.softReboot()
+            #self.softReboot()
         elif "Network" in self.recovery_type:
             self.softReboot()
             self.pingInstance(self.vm_name)
