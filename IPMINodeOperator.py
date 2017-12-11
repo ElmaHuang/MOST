@@ -31,10 +31,13 @@ class Operator(object):
 			try:
 				ipmi_result=self.ipmi_module.startNode(node_name)
 				if ipmi_result["code"] == "0":
-					boot_up = self._check_node_boot_success(node_name, default_wait_time)
-					if boot_up:
+					boot_up = self.ipmi_module.getPowerStatus(node_name)
+					if boot_up == "OK":
 						message += "start node success.The node is %s." % node_name
 						logging.info(message)
+						detection = self._check_node_detectionagent(node_name, default_wait_time)
+						if not detection:
+							message += "detectionagent in computing node is fail."
 						result = {"code": "0", "node_name": node_name, "message": message}
 					else: raise Exception("check node boot fail")
 				else :raise Exception("IpmiModule start node fail")
@@ -73,7 +76,7 @@ class Operator(object):
 			result = {"code": "1", "node_name": node_name, "message": message}
 		return result
 
-	def rebootNode(self,node_name):
+	def rebootNode(self,node_name,default_wait_time = 300):
 		message = ""
 		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
 			try:
@@ -82,6 +85,9 @@ class Operator(object):
 					message += "reboot node success.The node is %s." % node_name
 					logging.info(message)
 					result = {"code": "0", "node_name": node_name, "message": message}
+					detection = self._check_node_detectionagent(node_name,default_wait_time)
+					if not detection :
+						message += "detectionagent in computing node is fail."
 				else:
 					raise Exception("IpmiModule reboot node fail")
 			except Exception as e:
@@ -126,7 +132,7 @@ class Operator(object):
 					return False
 		return True
 
-	def _check_node_boot_success(self, nodeName, check_timeout, timeout=1):
+	def _check_node_detectionagent(self, nodeName, check_timeout, timeout=1):
 		#not be protect(not connect socket)
 		#check power statue in IPMIModule
 		#check detection agent
