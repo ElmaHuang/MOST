@@ -173,6 +173,7 @@ class Operator(object):
 				if "OK" in data:
 					status = True
 					sock.close()
+					print data
 				else:
 					#time.sleep(1)
 					print "data: ", data, "wating ", check_timeout
