@@ -21,7 +21,7 @@ class Operator(object):
 		self.port = int(config.get("detection","polling_port"))
 
 
-	def startNode(self,node_name, default_wait_time = 300):
+	def startNode(self,node_name, default_wait_time = 180):
 		message = ""
 		#code = ""
 		result = None
@@ -76,7 +76,7 @@ class Operator(object):
 			result = {"code": "1", "node_name": node_name, "message": message}
 		return result
 
-	def rebootNode(self,node_name,default_wait_time = 300):
+	def rebootNode(self,node_name,default_wait_time = 180):
 		message = ""
 		if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
 			try:
@@ -133,6 +133,7 @@ class Operator(object):
 		return True
 
 	def _check_node_boot(self,nodeName,check_timeout):
+		#check power statue in IPMIModule
 		status = False
 		while not status:
 			if check_timeout >0:
@@ -149,7 +150,6 @@ class Operator(object):
 
 	def _check_node_detectionagent(self, nodeName, check_timeout):
 		#not be protect(not connect socket)
-		#check power statue in IPMIModule
 		#check detection agent
 		status = False
 		data = ""
@@ -161,20 +161,24 @@ class Operator(object):
 		except Exception as e:
 			print "create socket fail",str(e)
 
-		while not status:
+		while status == False:
+			time.sleep(5)
 			if check_timeout > 0:
 				try:
 					sock.sendall("polling request")
 					data, addr = sock.recvfrom(2048)
 				except Exception as e:
-					print e
+					print str(e)
+
 				if "OK" in data:
 					status = True
 					sock.close()
 				else:
-					time.sleep(1)
-					check_timeout -= 1
+					#time.sleep(1)
+					print "data: ", data, "wating ", check_timeout
+					check_timeout -= 5
 			else:
 				#timeout
 				return status
+		#status is True
 		return status
