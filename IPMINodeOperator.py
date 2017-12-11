@@ -31,8 +31,8 @@ class Operator(object):
 			try:
 				ipmi_result=self.ipmi_module.startNode(node_name)
 				if ipmi_result["code"] == "0":
-					boot_up = self.ipmi_module.getPowerStatus(node_name)
-					if boot_up == "OK":
+					boot_up = self._check_node_boot(node_name,default_wait_time)
+					if boot_up :
 						message += "start node success.The node is %s." % node_name
 						logging.info(message)
 						detection = self. _check_node_detectionagent(node_name, default_wait_time)
@@ -132,6 +132,21 @@ class Operator(object):
 					return False
 		return True
 
+	def _check_node_boot(self,nodeName,check_timeout):
+		status = False
+		while not status:
+			if check_timeout >0:
+				result = self.ipmi_module.getPowerStatus(nodeName)
+				if result == "OK":
+					status = True
+				else:
+					time.sleep(1)
+					check_timeout -= 1
+			else:
+				return status
+		return status
+
+
 	def _check_node_detectionagent(self, nodeName, check_timeout):
 		#not be protect(not connect socket)
 		#check power statue in IPMIModule
@@ -148,16 +163,18 @@ class Operator(object):
 
 		while not status:
 			if check_timeout > 0:
-				break
-			try:
-				sock.sendall("polling request")
-				data, addr = sock.recvfrom(2048)
-			except Exception as e:
-				print e
-			if "OK" in data:
-				status = True
-				sock.close()
+				try:
+					sock.sendall("polling request")
+					data, addr = sock.recvfrom(2048)
+				except Exception as e:
+					print e
+				if "OK" in data:
+					status = True
+					sock.close()
+				else:
+					time.sleep(1)
+					check_timeout -= 1
 			else:
-				time.sleep(1)
-				check_timeout -= 1
+				#timeout
+				return status
 		return status
