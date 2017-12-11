@@ -35,7 +35,7 @@ class Operator(object):
 					if boot_up == "OK":
 						message += "start node success.The node is %s." % node_name
 						logging.info(message)
-						detection = self._check_node_detectionagent(node_name, default_wait_time)
+						detection = self. _check_node_detectionagent(node_name, default_wait_time)
 						if not detection:
 							message += "detectionagent in computing node is fail."
 						result = {"code": "0", "node_name": node_name, "message": message}
@@ -78,16 +78,16 @@ class Operator(object):
 
 	def rebootNode(self,node_name,default_wait_time = 300):
 		message = ""
-		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
+		if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
 			try:
 				ipmi_result = self.ipmi_module.rebootNode(node_name)
 				if ipmi_result["code"] == "0":
 					message += "reboot node success.The node is %s." % node_name
 					logging.info(message)
-					result = {"code": "0", "node_name": node_name, "message": message}
 					detection = self._check_node_detectionagent(node_name,default_wait_time)
 					if not detection :
 						message += "detectionagent in computing node is fail."
+					result = {"code": "0", "node_name": node_name, "message": message}
 				else:
 					raise Exception("IpmiModule reboot node fail")
 			except Exception as e:
@@ -141,7 +141,7 @@ class Operator(object):
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		sock.setblocking(0)
 		sock.settimeout(1)
-		while "OK" not in data and check_timeout > 0:
+		while status == True and check_timeout > 0:
 			try:
 				sock.sendto("polling request", (nodeName, int(self.port)))
 				data, addr = sock.recvfrom(2048)
