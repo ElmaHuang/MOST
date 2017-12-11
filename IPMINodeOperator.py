@@ -61,7 +61,7 @@ class Operator(object):
 				ipmi_result=self.ipmi_module.shutOffNode(node_name)
 				#check power status in IPMIModule
 				if ipmi_result["code"]== "0":
-					message += "sthut off node success.The node is %s." % node_name
+					message += "shut off node success.The node is %s." % node_name
 					logging.info(message)
 					result = {"code": "0", "node_name": node_name, "message": message}
 				else:raise Exception("IpmiModule shut off node fail")
@@ -138,6 +138,7 @@ class Operator(object):
 		while not status:
 			if check_timeout >0:
 				result = self.ipmi_module.getPowerStatus(nodeName)
+				print result,check_timeout
 				if result == "OK":
 					status = True
 				else:
@@ -176,7 +177,7 @@ class Operator(object):
 					print data
 				else:
 					#time.sleep(1)
-					print "data: ", data, "wating ", check_timeout
+					print "data:", data, "wating:", check_timeout
 					check_timeout -= 5
 			else:
 				#timeout
