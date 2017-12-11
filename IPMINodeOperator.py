@@ -132,18 +132,25 @@ class Operator(object):
 					return False
 		return True
 
-	def _check_node_detectionagent(self, nodeName, check_timeout, timeout=1):
+	def _check_node_detectionagent(self, nodeName, check_timeout):
 		#not be protect(not connect socket)
 		#check power statue in IPMIModule
 		#check detection agent
 		status = False
 		data = ""
-		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		sock.setblocking(0)
-		sock.settimeout(1)
-		while status == True and check_timeout > 0:
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			sock.setblocking(0)
+			sock.settimeout(0.5)
+			sock.connect((nodeName, self.port))
+		except Exception as e:
+			print "create socket fail",str(e)
+
+		while not status:
+			if check_timeout > 0:
+				break
 			try:
-				sock.sendto("polling request", (nodeName, int(self.port)))
+				sock.sendall("polling request")
 				data, addr = sock.recvfrom(2048)
 			except Exception as e:
 				print e
