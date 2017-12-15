@@ -47,7 +47,7 @@ class NodeInterface(object):
 		#ipmi_status = self.ipmi_status
 		polling_interval = float(config.get("detection","polling_interval"))
 
-		self.detection_thread = DetectionThread(cluster_id, node, polling_port, polling_interval)
+		self.detection_thread =  DetectionThread(cluster_id, node, polling_port, polling_interval)
 
 	def startDetectionThread(self):
 		self.detection_thread.daemon = True
