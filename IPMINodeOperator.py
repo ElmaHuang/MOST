@@ -126,7 +126,7 @@ class Operator(object):
 
 	def _checkNodeNotInCluster(self,node_name):
 		for cluster_id in self.cluster_list:
-			cluster=ClusterManager.getCluster(cluster_id)
+			cluster = ClusterManager.getCluster(cluster_id)
 			node_list = cluster.getAllNodeStr()
 			if node_name in node_list:
 					return False

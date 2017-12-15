@@ -64,10 +64,8 @@ class Cluster(ClusterInterface):
 
 	def addInstance(self , instance_id):
 		#self.host = None
-		'''
-		if self.isProtected(instance_id): # check instance is already being protected
-			raise Exception("this instance is already being protected!")
-		'''
+		#if self.isProtected(instance_id): # check instance is already being protected
+			#raise Exception("this instance is already being protected!")
 		if  not self.checkInstanceExist(instance_id):
 				raise Exception("Not any node have this instance!")
 		elif not self.checkInstanceGetVolume(instance_id):
@@ -126,7 +124,7 @@ class Cluster(ClusterInterface):
 				self.deleteInstance(info[0])
 			else :
 				ret.append(info)
-			if send_flag == True:self.sendUpdateInstance(instance.host)
+			if send_flag == True : self.sendUpdateInstance(instance.host)
 		return ret
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
@@ -134,28 +132,6 @@ class Cluster(ClusterInterface):
 			if node.containsInstance(instance_id):
 				return node
 		return None
-
-	'''
-	def _isNodeDuplicate(self , unchecked_node_name):
-		for node in self.node_list:
-			if node.name == unchecked_node_name:
-				return True
-		return False
-		
-	#addNode call
-	def _getIPMIStatus(self, node_name):
-		config = ConfigParser.RawConfigParser()
-		config.read('hass.conf')
-		ip_dict = dict(config._sections['ipmi'])
-		return node_name in ip_dict
-		
-	def _nodeIsIllegal(self , unchecked_node_name):
-		if not self._isInComputePool(unchecked_node_name):
-			return True
-		#if self._isNodeDuplicate(unchecked_node_name):
-			#return True
-		return False		
-	'''
 
 	def _isInComputePool(self, unchecked_node_name):
 		return unchecked_node_name in self.nova_client.getComputePool()
@@ -271,6 +247,37 @@ class Cluster(ClusterInterface):
 				if instance.host == node.name:
 					ret.append(instance)
 			return ret
+
+
+if __name__ == "__main__":
+	a = Cluster("123","name")
+	list = ["compute3"]
+	a.addNode(list)
+	host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
+	#print "h:",host
+
+	'''
+	def _isNodeDuplicate(self , unchecked_node_name):
+		for node in self.node_list:
+			if node.name == unchecked_node_name:
+				return True
+		return False
+
+	#addNode call
+	def _getIPMIStatus(self, node_name):
+		config = ConfigParser.RawConfigParser()
+		config.read('hass.conf')
+		ip_dict = dict(config._sections['ipmi'])
+		return node_name in ip_dict
+
+	def _nodeIsIllegal(self , unchecked_node_name):
+		if not self._isInComputePool(unchecked_node_name):
+			return True
+		#if self._isNodeDuplicate(unchecked_node_name):
+			#return True
+		return False		
+	'''
+
 	'''
 	def sendToLocal(self,ip):
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -288,12 +295,5 @@ class Cluster(ClusterInterface):
 			else:
 				continue
 	'''
-
-if __name__ == "__main__":
-	a = Cluster("123","name")
-	list = ["compute3"]
-	a.addNode(list)
-	host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
-	#print "h:",host
 
 

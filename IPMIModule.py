@@ -179,7 +179,7 @@ class IPMIManager(object):
         return result
 
     def getAllInfoByNode(self,node_name):
-        AllTemp=["Temp","Inlet Temp","Fan1","Fan2"]
+        AllTemp = ["Temp","Inlet Temp","Fan1","Fan2"]
         try:
             result=self.getNodeInfoByType(node_name,AllTemp)
             logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
