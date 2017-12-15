@@ -1,9 +1,18 @@
 #!/usr/bin/python
-"""
-HASS Service
-Using SimpleXMLRPC library handle http requests
-Client can use function in Hass class directly
-"""
+
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   HASS Service
+#   Using SimpleXMLRPC library handle http requests
+#   Client can use function in Hass class directly
+##########################################################
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
@@ -77,7 +86,8 @@ class Hass (object):
     def __init__(self):
         ClusterManager.init()
         self.Operator = Operator()
-        self.Recovery = RecoveryManager()
+
+        self.RecoveryManager = RecoveryManager()
 
     def test_auth_response(self):
     #Unit tester call this function to get successful message if authenticate success.
@@ -210,7 +220,7 @@ class Hass (object):
     
     def recover(self, fail_type, cluster_id, node_name):
         try:
-            result = self.Recovery.recover(fail_type, cluster_id, node_name)
+            result = self.RecoveryManager.recover(fail_type, cluster_id, node_name)
             return result
         except Exception as e:
             print str(e)
@@ -221,12 +231,11 @@ def main():
     config.read('hass.conf')
 
     log_level = logging.getLevelName(config.get("log", "level"))
-    logFilename = config.get("log", "location")
-    dir = os.path.dirname(logFilename)
+    log_file_name = config.get("log", "location")
+    dir = os.path.dirname(log_file_name)
     if not os.path.exists(dir):
         os.makedirs(dir)
-    logging.basicConfig(filename=logFilename, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
-
+    logging.basicConfig(filename=log_file_name, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
     server = SimpleXMLRPCServer(('',int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler, allow_none = True, logRequests=False)
     server.register_introspection_functions()
     server.register_multicall_functions()
