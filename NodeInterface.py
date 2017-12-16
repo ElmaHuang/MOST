@@ -1,3 +1,14 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a interface for node data structure.
+#########################################################
 from NovaClient import NovaClient
 from DetectionThread import DetectionThread
 from IPMIModule import IPMIManager
@@ -46,8 +57,7 @@ class NodeInterface(object):
 		polling_port = int(config.get("detection","polling_port"))
 		#ipmi_status = self.ipmi_status
 		polling_interval = float(config.get("detection","polling_interval"))
-
-		self.detection_thread =  DetectionThread(cluster_id, node, polling_port, polling_interval)
+		self.detection_thread = DetectionThread(cluster_id, node, polling_port, polling_interval)
 
 	def startDetectionThread(self):
 		self.detection_thread.daemon = True
@@ -64,7 +74,6 @@ class NodeInterface(object):
 		so.connect((self.name ,5001))
 		#ip = so.recv(1024)
 		so.send("update instance")
-		#print ip
 		so.close()
 
 if __name__ == "__main__":
