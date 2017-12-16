@@ -27,7 +27,7 @@ class Instance(object):
 		return True
 	'''
 	def updateInfo(self):
-		self.host = self.nova_client.getInstanceHost(self.id) #checkinstanceState ??
+		self.host = self.nova_client.getInstanceHost(self.id)
 		self.status = self.nova_client.getInstanceState(self.id)
 		self.network = self.nova_client.getInstanceNetwork(self.id)
 

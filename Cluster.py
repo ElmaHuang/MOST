@@ -94,8 +94,7 @@ class Cluster(ClusterInterface):
 				instance = Instance(id=instance_id,
 									name=self.nova_client.getInstanceName(instance_id),
 									host=final_host,
-									status=self.nova_client.getInstanceState(instance_id),
-									network=self.nova_client.getInstanceNetwork(instance_id))
+									)
 				self.sendUpdateInstance(final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
