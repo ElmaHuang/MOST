@@ -1,3 +1,14 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#	This is a class which maintains cluster data structure.
+##########################################################
 from ClusterInterface import ClusterInterface
 #from DetectionManager import DetectionManager
 from Node import Node
@@ -29,6 +40,7 @@ class Cluster(ClusterInterface):
 					message += "the node %s is illegal.  " %node_name
 					logging.error(message)
 		except Exception as e:
+			print str(e)
 			message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
 			result = {"code": "1", "clusterId": self.id, "message": message}
@@ -79,7 +91,11 @@ class Cluster(ClusterInterface):
 				final_host = self.checkInstanceHost(instance_id)
 				if final_host == None:
 					final_host=self.liveMigrateInstance(instance_id)
-				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=final_host)
+				instance = Instance(id=instance_id,
+									name=self.nova_client.getInstanceName(instance_id),
+									host=final_host,
+									status=self.nova_client.getInstanceState(instance_id),
+									network=self.nova_client.getInstanceNetwork(instance_id))
 				self.sendUpdateInstance(final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
@@ -94,18 +110,28 @@ class Cluster(ClusterInterface):
 				return result
 
 	def deleteInstance(self , instance_id):
-		if not self.isProtected(instance_id):
-			raise Exception("this instance is not being protected")
-		for instance in self.instance_list:
-			host = instance.host
-			if instance.id == instance_id:
-				self.instance_list.remove(instance)
-				self.sendUpdateInstance(host)
-		#if instanceid not in self.instacne_list:
-		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-		logging.info(message)
-		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
-		return result
+		result = None
+		try:
+			for instance in self.instance_list:
+				host = instance.host
+				if instance.id == instance_id:
+					self.instance_list.remove(instance)
+					self.sendUpdateInstance(host)
+					message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
+					logging.info(message)
+					result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+			#if instanceid not in self.instacne_list:
+			if result == None:
+				message = "Cluster--delete instance fail ,please check again! The instance id is %s." % instance_id
+				logging.error(message)
+				result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+		except Exception as e:
+			print str(e)
+			message = "Cluster--delete instance fail . The instance id is %s." % instance_id
+			logging.error(message)
+			result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+		finally:
+			return result
 
 	def deleteInstanceByNode(self, node):
 		protected_instance_list = self.getProtectedInstanceListByNode(node)
@@ -248,7 +274,6 @@ class Cluster(ClusterInterface):
 					ret.append(instance)
 			return ret
 
-
 if __name__ == "__main__":
 	a = Cluster("123","name")
 	list = ["compute3"]
@@ -277,23 +302,4 @@ if __name__ == "__main__":
 			#return True
 		return False		
 	'''
-
-	'''
-	def sendToLocal(self,ip):
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.bind(('192.168.0.112', 5001))
-		s.listen(5)
-		# s.settimeout(5)
-		while True:
-			cs, addr = s.accept()
-			print "addr:", addr
-			cs.send(ip)
-			d = cs.recv(1024)
-			# print d
-			if d == "get":
-				cs.close()
-			else:
-				continue
-	'''
-
 
