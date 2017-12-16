@@ -1,3 +1,14 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#	This is a static class which maintains all the data structure.
+##########################################################
 from Cluster import Cluster
 from DatabaseManager import DatabaseManager
 import uuid
@@ -124,7 +135,7 @@ class ClusterManager():
 			logging.error("ClusterManager--listNode-- get all node info fail")
 
 	@staticmethod
-	def addInstance(cluster_id, instance_id):
+	def addInstance(cluster_id, instance_id, write_DB=True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		message = ""
 		if not cluster:
@@ -136,17 +147,19 @@ class ClusterManager():
 				if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
 					raise Exception("instance already being protected ")
 				result=cluster.addInstance(instance_id)
+				if write_DB:
+					ClusterManager.syncToDatabase()
 				logging.info("ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id))
 				return result
 			except Exception as e:
-				print e
+				print str(e)
 				message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
 				logging.error(message)
 				result = {"code": "1", "clusterId": cluster_id, "message": message}
 				return result
 
 	@staticmethod
-	def deleteInstance(cluster_id , instance_id):
+	def deleteInstance(cluster_id , instance_id, write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -155,6 +168,8 @@ class ClusterManager():
 		else:
 			try:
 				result=cluster.deleteInstance(instance_id)
+				if write_DB:
+					ClusterManager.syncToDatabase()
 				logging.info("ClusterManager--delete instance success")
 				return result
 			except Exception as e:
@@ -162,14 +177,6 @@ class ClusterManager():
 				logging.error(message)
 				result = {"code": "1", "clusterId":cluster_id, "message":message}
 				return result
-	'''
-	@staticmethod
-	def getProtectedInstanceList(cluster_id):
-		cluster = ClusterManager.getCluster(cluster_id)
-		if not cluster:
-			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
-		return cluster.getProtectedInstanceList()
-	'''
 	@staticmethod
 	def listInstance(cluster_id,send):
 		cluster = ClusterManager.getCluster(cluster_id)
@@ -263,8 +270,11 @@ class ClusterManager():
 				ClusterManager.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
 				if cluster["node_list"] !=[]:
 					ClusterManager.addNode(cluster["cluster_id"],cluster["node_list"],False)
+				for instance in cluster["instance_list"]:
+					ClusterManager.addInstance(cluster["cluster_id"], instance)
 			logging.info("ClusterManager--synco from DB finish")
-		except:
+		except Exception as e:
+			print str(e)
 			logging.error("ClusterManagwer--synco from DB fail")
 
 	@staticmethod
@@ -277,4 +287,14 @@ class ClusterManager():
 if __name__ == "__main__":
 	ClusterManager.init()
 	ClusterManager.deleteCluster("8c46ecee-9bd6-4c82-b7c8-6b6d20dc09d7")
+
+	'''
+	@staticmethod
+	def getProtectedInstanceList(cluster_id):
+		cluster = ClusterManager.getCluster(cluster_id)
+		if not cluster:
+			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
+		return cluster.getProtectedInstanceList()
+	'''
+
 
