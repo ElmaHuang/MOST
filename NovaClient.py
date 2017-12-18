@@ -131,12 +131,12 @@ class NovaClient (object):
 
 	def isInstancePowerOn(self, id):
 		vm = self.getVM(id)
-		if vm != None:
-			power_state = getattr(vm,"OS-EXT-STS:power_state")
-			if power_state != 1:
-				return False
-			return True
-		return None
+		if vm == None:return None
+		power_state = getattr(vm,"OS-EXT-STS:power_state")
+		if power_state != 1:
+			return False
+		return True
+		#return None
 
 	def getVolumes(self,id):
 		return NovaClient._helper.volumes.get_server_volumes(id)
