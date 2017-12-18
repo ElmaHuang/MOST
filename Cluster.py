@@ -89,8 +89,9 @@ class Cluster(ClusterInterface):
 				#Live migration VM to cluster node
 				#print "start live migration"
 				final_host = self.checkInstanceHost(instance_id)
-				if final_host == None:
-					final_host=self.liveMigrateInstance(instance_id)
+				if final_host == None:final_host=self.liveMigrateInstance(instance_id)
+				if final_host == None:raise Exception("live migrate vm fail")
+
 				instance = Instance(id=instance_id,
 									name=self.nova_client.getInstanceName(instance_id),
 									host=final_host,
@@ -144,7 +145,7 @@ class Cluster(ClusterInterface):
 			for instance in self.instance_list[:]:
 				info = instance.getInfo()
 				#for status in info[]:
-				if "SHUTOFF" in info:
+				if "SHUTOFF" or None in info:
 					self.deleteInstance(info[0])
 				elif info[2] not in self.getAllNodeStr():
 					self.deleteInstance(info[0])
