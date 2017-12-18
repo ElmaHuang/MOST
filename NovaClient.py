@@ -103,11 +103,9 @@ class NovaClient (object):
 		instance = self.getVM(instance_id)
 		#if instance == None:return None
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
-		#return None
 
 	def getInstanceHost(self, instance_id, check_timeout=60):
 		status = None
-		instance = self.getVM(instance_id)
 		#if instance == None:return None
 		while status != "ACTIVE" and check_timeout > 0:
 			instance = self.getVM(instance_id)
@@ -115,26 +113,24 @@ class NovaClient (object):
 			print "getInstanceHost in nova-client : %s , %s" % (status , getattr(instance, "name"))
 			check_timeout -= 1
 			time.sleep(1)
-		#instance = self.getVM(instance_id)
+		instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 		#return None
 
 	def getInstanceNetwork(self,instance_id):
 		instance = self.getVM(instance_id)
-		#if instance == None:return None
 		network = getattr(instance, "networks")
 		return network
 
 	def isInstanceExist(self, instance_id):
 		try:
 			NovaClient._helper.servers.get(instance_id)
+			return True
 		except:
 			return False
-		return True
 
 	def isInstancePowerOn(self, id):
 		vm = self.getVM(id)
-		#if vm == None:return None
 		power_state = getattr(vm,"OS-EXT-STS:power_state")
 		if power_state != 1:
 			return False

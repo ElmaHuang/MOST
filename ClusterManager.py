@@ -146,7 +146,7 @@ class ClusterManager():
 			try:
 				if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
 					raise Exception("instance already being protected ")
-				result=cluster.addInstance(instance_id)
+				result = cluster.addInstance(instance_id)
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				logging.info("ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id))

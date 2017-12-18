@@ -90,8 +90,6 @@ class Cluster(ClusterInterface):
 				#print "start live migration"
 				final_host = self.checkInstanceHost(instance_id)
 				if final_host == None:final_host=self.liveMigrateInstance(instance_id)
-				#if final_host == None:raise Exception("live migrate vm fail")
-
 				instance = Instance(id=instance_id,
 									name=self.nova_client.getInstanceName(instance_id),
 									host=final_host,
@@ -215,11 +213,11 @@ class Cluster(ClusterInterface):
 	def checkInstanceExist(self, instance_id):
 		node_list = self.nova_client.getComputePool()
 		print "node list of all compute node:",node_list
-		instance_list=self.nova_client.getAllInstanceList()
+		instance_list = self.nova_client.getAllInstanceList()
 		print instance_list
 		for instance in instance_list:
 			#print node_list
-			if instance.id==instance_id:
+			if instance.id == instance_id:
 				logging.info("Cluster--addInstance-checkInstanceExist success")
 				return True
 		message = "this instance is not exist. Instance id is %s. " % instance_id
