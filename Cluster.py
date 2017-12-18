@@ -90,7 +90,7 @@ class Cluster(ClusterInterface):
 				#print "start live migration"
 				final_host = self.checkInstanceHost(instance_id)
 				if final_host == None:final_host=self.liveMigrateInstance(instance_id)
-				if final_host == None:raise Exception("live migrate vm fail")
+				#if final_host == None:raise Exception("live migrate vm fail")
 
 				instance = Instance(id=instance_id,
 									name=self.nova_client.getInstanceName(instance_id),
@@ -145,7 +145,7 @@ class Cluster(ClusterInterface):
 			for instance in self.instance_list[:]:
 				info = instance.getInfo()
 				#for status in info[]:
-				if "SHUTOFF" or None in info:
+				if "SHUTOFF" in info:
 					self.deleteInstance(info[0])
 				elif info[2] not in self.getAllNodeStr():
 					self.deleteInstance(info[0])
@@ -248,7 +248,7 @@ class Cluster(ClusterInterface):
 
 	def checkInstanceHost(self,instance_id):
 		host = self.nova_client.getInstanceHost(instance_id)
-		if host == None:print "get vm host fail"
+		#if host == None:print "get vm host fail"
 		for node in self.node_list[:]:
 			if host == node.name:
 				return host
@@ -256,7 +256,7 @@ class Cluster(ClusterInterface):
 
 	def liveMigrateInstance(self,instance_id):
 		host = self.nova_client.getInstanceHost(instance_id)
-		if host == None: print "get vm host fail"
+		#if host == None: print "get vm host fail"
 		target_host = self.findTargetHost(host)
 		print "start live migrate vm from ",host,"to ",target_host.name
 		final_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)

@@ -16,6 +16,7 @@
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from novaclient import client
+from ClusterManager import ClusterManager
 import ConfigParser
 import time
 
@@ -69,13 +70,19 @@ class NovaClient (object):
 		return NovaClient._helper.hypervisors.list()
 
 	def getVM(self,id):
-		vm = None
+		#vm = None
 		try:
 			vm =  NovaClient._helper.servers.get(id)
-		except Exception as e:
-			print str(e)
-		finally:
 			return vm
+		except Exception as e:
+			print "novaclient--getvm-exception:",str(e)
+			cluster_list = ClusterManager.getClusterList()
+			for id,cluster in cluster_list.iteritems():
+				for instance in cluster.instance_list[:]:
+					if instance.id == id:
+						ClusterManager.deleteInstance(cluster.id,instance.id)
+		#finally:
+			#return vm
 
 	def getInstanceListByNode(self, node_name):
 		ret = []
@@ -88,36 +95,35 @@ class NovaClient (object):
 
 	def getInstanceState(self, instance_id):
 		instance = self.getVM(instance_id)
-		if instance != None:
-			return getattr(instance, "status")
-		return None
+		#if instance == None:return None
+		return getattr(instance, "status")
 
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
 	def getInstanceName(self , instance_id):
 		instance = self.getVM(instance_id)
-		if instance != None:
-			return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
-		return None
+		#if instance == None:return None
+		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
+		#return None
 
 	def getInstanceHost(self, instance_id, check_timeout=60):
 		status = None
 		instance = self.getVM(instance_id)
-		if instance == None:return None
+		#if instance == None:return None
 		while status != "ACTIVE" and check_timeout > 0:
 			instance = self.getVM(instance_id)
 			status = self.getInstanceState(instance_id)
 			print "getInstanceHost in nova-client : %s , %s" % (status , getattr(instance, "name"))
 			check_timeout -= 1
 			time.sleep(1)
-			#instance = self.getVM(instance_id)
+		#instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 		#return None
 
 	def getInstanceNetwork(self,instance_id):
 		instance = self.getVM(instance_id)
-		if instance == None:return None
+		#if instance == None:return None
 		network = getattr(instance, "networks")
 		return network
 
@@ -130,7 +136,7 @@ class NovaClient (object):
 
 	def isInstancePowerOn(self, id):
 		vm = self.getVM(id)
-		if vm == None:return None
+		#if vm == None:return None
 		power_state = getattr(vm,"OS-EXT-STS:power_state")
 		if power_state != 1:
 			return False
@@ -155,16 +161,16 @@ class NovaClient (object):
 	def liveMigrateVM(self, instance_id, target_host, check_timeout=60):
 		#print ""
 		instance = self.getVM(instance_id)
-		if instance != None:
-			instance.live_migrate(host = target_host)
-			while check_timeout > 0:
-				state = self.getInstanceState(instance_id)
-				if state == "ACTIVE":
-					return self.getInstanceHost(instance_id)
-				else:
-					time.sleep(1)
-					check_timeout -= 1
-		return None
+		#if instance == None:return None
+		instance.live_migrate(host = target_host)
+		while check_timeout > 0:
+			state = self.getInstanceState(instance_id)
+			if state == "ACTIVE":
+				return self.getInstanceHost(instance_id)
+			else:
+				time.sleep(1)
+				check_timeout -= 1
+		#return None
 
 	def evacuate(self, instance, target_host, fail_node):
 		self.novaServiceDown(fail_node)
