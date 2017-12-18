@@ -1,3 +1,15 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class which detects whether computing nodes happens error or not.
+##########################################################
+
 import sys
 import threading
 import time
@@ -17,7 +29,7 @@ class DetectionThread(threading.Thread):
         self.cluster_id = node.cluster_id
         self.ipmi_status = node.ipmi_status
         self.polling_interval = polling_interval
-        self.exit = False
+        self.loop_exit = False
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
         self.detector = Detector(node, port)
@@ -29,7 +41,7 @@ class DetectionThread(threading.Thread):
         data = ""
         failure_occured_time = 0
         failure_detection_time = 0
-        while not self.exit:
+        while not self.loop_exit:
             state = self.detect()
             print "["+ self.node.name + "] "+state
 
@@ -49,13 +61,13 @@ class DetectionThread(threading.Thread):
             time.sleep(self.polling_interval)
 
     def stop(self):
-        self.exit = True
+        self.loop_exit = True
 
     def detect(self):
-        service_check = self.function_map[-1]
+        highest_level_check = self.function_map[-1]
 
-        if service_check() != State.HEALTH:
-            state = self.verify(service_check)
+        if highest_level_check() != State.HEALTH:
+            state = self.verify(highest_level_check)
             if state == State.HEALTH:
                 return State.HEALTH
             else:
@@ -88,5 +100,4 @@ if __name__ == "__main__":
     config.read('hass.conf')
     authUrl = "http://"+config.get("rpc", "rpc_username")+":"+config.get("rpc", "rpc_password")+"@127.0.0.1:"+config.get("rpc", "rpc_bind_port")
     server = xmlrpclib.ServerProxy(authUrl)
-
     server.test()
