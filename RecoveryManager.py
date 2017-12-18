@@ -1,6 +1,20 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class maintains recovery methods.
+##########################################################
+
+
 from ClusterManager import ClusterManager
 from NovaClient import NovaClient
 from Detector import Detector
+from DatabaseManager import IIIDatabaseManager
 import State
 import logging
 import ConfigParser
@@ -17,6 +31,8 @@ class RecoveryManager(object):
 								 State.POWER_FAIL : self.recoverPowerOff,
 								 State.SENSOR_FAIL : self.recoverSensorCritical,
 								 State.OS_FAIL : self.recoverOSHanged}
+		self.iii_support = self.config.getboolean("iii","iii_support")
+		self.iii_database = IIIDatabaseManager()
 
 	def recover(self, fail_type, cluster_id, fail_node_name):
 		return self.recover_function[fail_type](cluster_id, fail_node_name)
@@ -64,11 +80,12 @@ class RecoveryManager(object):
 			return
 		fail_node = cluster.getNodeByName(fail_node_name)
 
+		network_transient_time = int(self.config.get("default","network_transient_time"))
 		second_chance = State.HEALTH
 		try:
 			print "start second_chance..."
-			print "wait 30 seconds and check again"
-			time.sleep(30) # sleep 30 seconds and ping host again
+			print "wait %s seconds and check again" % network_transient_time
+			time.sleep(network_transient_time) # sleep certain transient seconds and ping host again
 			response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', fail_node.name], stderr=subprocess.STDOUT, universal_newlines=True)
 		except subprocess.CalledProcessError:
 			print "After 30 senconds, the network status of %s is still unreachable" % fail_node.name
@@ -114,7 +131,6 @@ class RecoveryManager(object):
 		else:
 			status = self.restartServices(fail_node, fail_services, version)
 
-		status = False
 		if not status: # restart service fail
 			print "start recovery"
 			print "fail node is %s" % fail_node.name
@@ -154,12 +170,21 @@ class RecoveryManager(object):
 				logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
 		print "check instance status"
-		status = self._check_instance_status(fail_node, cluster)
+
+		status = self.checkInstanceStatus(fail_node, cluster)
 		if status == False:
 			logging.error("RecoverManager : check vm status false")
-
 		print "update instance"
 		cluster.updateInstance()
+		if self.iii_support:
+			print "start modify iii database"
+			for instance in protected_instance_list:
+				try:
+					self.iii_database.updateInstance(instance.id, target_host.name)
+				except Exception as e:
+					print str(e)
+					logging.error("%s" % str(e))
+			print "end modify iii database"
 
 	def recoverNodeByReboot(self, fail_node):
 		print "start recover node by reboot"
@@ -168,7 +193,7 @@ class RecoveryManager(object):
 		message = "RecoveryManager recover network isolation"
 		if result["code"] == "0":
 			logging.info(message + result["message"])
-			boot_up = self.check_node_boot_success(fail_node)
+			boot_up = self.checkNodeBootSuccess(fail_node)
 			if boot_up:
 				print "Node %s recovery finished." % fail_node.name
 				return True
@@ -196,7 +221,7 @@ class RecoveryManager(object):
 		message = "RecoveryManager recover network isolation"
 		if result["code"] == "0":
 			logging.info(message + result["message"])
-			boot_up = self.check_node_boot_success(fail_node)
+			boot_up = self.checkNodeBootSuccess(fail_node)
 			if boot_up:
 				print "Node %s recovery finished." % fail_node.name
 				return True
@@ -238,10 +263,10 @@ class RecoveryManager(object):
 		try:
 			for fail_service in fail_service_list:
 				fail_service = service_mapping[fail_service]
-				if version ==14:
-					cmd = "sudo service %s restart" % fail_service
-				elif version == 16:
+				if version ==16:
 					cmd = "systemctl restart %s" % fail_service
+				else:
+					cmd = "sudo service %s restart" % fail_service
 				print cmd
 				stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
 
@@ -264,7 +289,7 @@ class RecoveryManager(object):
 			print str(e)
 			return False
 
-	def _check_instance_status(self, fail_node, cluster, check_timeout=60):
+	def checkInstanceStatus(self, fail_node, cluster, check_timeout=60):
 		status = False
 		fail = False
 		protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
@@ -297,7 +322,7 @@ class RecoveryManager(object):
 				check_timeout -= 1
 		return status
 
-	def check_node_boot_success(self, node, check_timeout=300):
+	def checkNodeBootSuccess(self, node, check_timeout=300):
 		port = int(self.config.get("detection","polling_port"))
 		detector = Detector(node, port)
 		print "waiting node to reboot"
@@ -316,4 +341,4 @@ class RecoveryManager(object):
 
 if __name__ == "__main__":
 	r = RecoveryManager()
-	l = r.remote_exec("compute3","virsh list --all")
+	#l = r.remote_exec("compute3","virsh list --all")
