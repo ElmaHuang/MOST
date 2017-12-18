@@ -79,9 +79,9 @@ class Cluster(ClusterInterface):
 		#if self.isProtected(instance_id): # check instance is already being protected
 			#raise Exception("this instance is already being protected!")
 		if  not self.checkInstanceExist(instance_id):
-				raise Exception("Not any node have this instance!")
+			raise Exception("Not any node have this instance!")
 		elif not self.checkInstanceGetVolume(instance_id):
-				raise Exception("Instance don't have Volume")
+			raise Exception("Instance don't have Volume")
 		elif not self.checkInstancePowerOn(instance_id):
 			raise Exception("this instance is power off!")
 		else:
