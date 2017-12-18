@@ -32,7 +32,7 @@ class RecoveryManager(object):
 								 State.SENSOR_FAIL : self.recoverSensorCritical,
 								 State.OS_FAIL : self.recoverOSHanged}
 		self.iii_support = self.config.getboolean("iii","iii_support")
-		self.iii_database = IIIDatabaseManager()
+		self.iii_database = None
 
 	def recover(self, fail_type, cluster_id, fail_node_name):
 		return self.recover_function[fail_type](cluster_id, fail_node_name)
@@ -177,6 +177,7 @@ class RecoveryManager(object):
 		print "update instance"
 		cluster.updateInstance()
 		if self.iii_support:
+			self.iii_database = IIIDatabaseManager()
 			print "start modify iii database"
 			for instance in protected_instance_list:
 				try:
