@@ -38,16 +38,7 @@ class NodeInterface(object):
 
 	def getClusterId(self, cluster_id):
 		return self.cluster_id 
-	'''
-	def addInstance(self, instance):
-		self.protected.instance_list.append(instance)
 
-	def removeInstance(self, instance):
-		self.instance_list.remove(instance)
-
-	def initInstanceList(self):
-		self.instance_list = []
-	'''
 	def initDetectionThread(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
