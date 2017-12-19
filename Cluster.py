@@ -107,14 +107,14 @@ class Cluster(ClusterInterface):
 			finally:
 				return result
 
-	def deleteInstance(self , instance_id, send_flag = True):
+	def deleteInstance(self , instance_id):
 		result = None
 		try:
 			for instance in self.instance_list:
 				host = instance.host
 				if instance.id == instance_id:
 					self.instance_list.remove(instance)
-					if send_flag == True: self.sendUpdateInstance(host)
+					self.sendUpdateInstance(host)
 					message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 					logging.info(message)
 					result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
@@ -144,12 +144,12 @@ class Cluster(ClusterInterface):
 				info = instance.getInfo()
 				#for status in info[]:
 				if "SHUTOFF" in info:
-					self.deleteInstance(info[0],False)
+					self.deleteInstance(info[0])
 				elif info[2] not in self.getAllNodeStr():
-					self.deleteInstance(info[0],False)
+					self.deleteInstance(info[0])
 				else :
 					ret.append(info)
-				if send_flag == True : self.sendUpdateInstance(instance.host)
+					if send_flag == True: self.sendUpdateInstance(instance.host)
 		except Exception as e:
 			print "cluster--getAllInstanceInfo fail:",str(e)
 		finally:
