@@ -13,8 +13,6 @@ from ClusterInterface import ClusterInterface
 #from DetectionManager import DetectionManager
 from Node import Node
 from Instance import Instance
-import socket
-import uuid
 import logging
 import ConfigParser
 
@@ -107,7 +105,7 @@ class Cluster(ClusterInterface):
 			finally:
 				return result
 
-	def deleteInstance(self , instance_id, send_flag = True):
+	def deleteInstance(self, instance_id, send_flag):
 		result = None
 		try:
 			for instance in self.instance_list:
@@ -137,28 +135,30 @@ class Cluster(ClusterInterface):
 			self.deleteInstance(instance.id)
 	#list Instance
 	def getAllInstanceInfo(self,send_flag):
-		ret = []
-		#instance_list = self.getProtectedInstanceList()
+		legal_instance = []
+		illegal_instance = []
 		try:
 			for instance in self.instance_list[:]:
 				prev_host = instance.host
 				info = instance.getInfo()
 				host = info[2]
 				if "SHUTOFF" in info:
-					self.deleteInstance(info[0], False)
-				elif info[2] not in self.getAllNodeStr():
-					self.deleteInstance(info[0], False)
-				else :
-					ret.append(info)
+					illegal_instance.append((info[0], prev_host, host))
+				elif host not in self.getAllNodeStr():
+					illegal_instance.append((info[0], prev_host, host))
+				else:
+					legal_instance.append(info)
+				'''	
 				if send_flag == True:
 					if prev_host in self.getAllNodeStr():
 						self.sendUpdateInstance(prev_host)
 					if host in self.getAllNodeStr():
 						self.sendUpdateInstance(host)
+				'''
 		except Exception as e:
 			print "cluster--getAllInstanceInfo fail:",str(e)
 		finally:
-			return ret
+			return legal_instance,illegal_instance
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:

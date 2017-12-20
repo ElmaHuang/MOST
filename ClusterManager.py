@@ -159,7 +159,7 @@ class ClusterManager():
 				return result
 
 	@staticmethod
-	def deleteInstance(cluster_id , instance_id, write_DB = True):
+	def deleteInstance(cluster_id, instance_id, send_flag = True, write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -167,13 +167,14 @@ class ClusterManager():
 			return result
 		else:
 			try:
-				result=cluster.deleteInstance(instance_id)
+				result = cluster.deleteInstance(instance_id,send_flag)
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				logging.info("ClusterManager--delete instance success")
 				return result
 			except Exception as e:
 				message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
+				print str(e)
 				logging.error(message)
 				result = {"code": "1", "clusterId":cluster_id, "message":message}
 				return result
@@ -183,8 +184,17 @@ class ClusterManager():
 		if not cluster:
 			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
 		try:
-			instance_list = cluster.getAllInstanceInfo(send)
-		#if not instance_list:
+			instance_list, illegal_instance = cluster.getAllInstanceInfo(send)
+			#delete illegal instance
+			if illegal_instance != []:
+				for instance in illegal_instance:
+					ClusterManager.deleteInstance(cluster_id,instance[0],False)
+			# send upadte host of legal instacne and prev_host of illegal instance
+			for instance in instance_list[:]:
+				cluster.sendUpdateInstance(instance[2])
+			for instance in illegal_instance[:]:
+				cluster.sendUpdateInstance(instance[1])
+			cluster.sendUpdateInstance()
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
 			result = {"code":"0","instanceList":instance_list}
 			return result
