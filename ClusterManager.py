@@ -200,7 +200,9 @@ class ClusterManager():
 			return result
 		except Exception as e:
 			print str(e)
+			result = {"code":"1","instanceList":[]}
 			logging.error("ClusterManager--listInstance,getInstanceList fail")
+			return result
 
 	@staticmethod
 	def _addToClusterList(cluster_name , cluster_id = None):
