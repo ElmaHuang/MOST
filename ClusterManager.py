@@ -194,11 +194,12 @@ class ClusterManager():
 				cluster.sendUpdateInstance(instance[2])
 			for instance in illegal_instance[:]:
 				cluster.sendUpdateInstance(instance[1])
-			cluster.sendUpdateInstance()
+			#cluster.sendUpdateInstance()
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
 			result = {"code":"0","instanceList":instance_list}
 			return result
-		except:
+		except Exception as e:
+			print str(e)
 			logging.error("ClusterManager--listInstance,getInstanceList fail")
 
 	@staticmethod
