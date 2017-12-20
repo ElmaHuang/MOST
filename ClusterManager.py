@@ -190,11 +190,11 @@ class ClusterManager():
 				for instance in illegal_instance:
 					ClusterManager.deleteInstance(cluster_id,instance[0],False)
 			# send upadte host of legal instacne and prev_host of illegal instance
-			for instance in instance_list[:]:
-				cluster.sendUpdateInstance(instance[2])
-			for instance in illegal_instance[:]:
-				cluster.sendUpdateInstance(instance[1])
-			#cluster.sendUpdateInstance()
+			if send == True:
+				for instance in instance_list[:]:
+					cluster.sendUpdateInstance(instance[2])
+				for instance in illegal_instance[:]:
+					cluster.sendUpdateInstance(instance[1])
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
 			result = {"code":"0","instanceList":instance_list}
 			return result

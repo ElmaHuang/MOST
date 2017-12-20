@@ -134,7 +134,7 @@ class Cluster(ClusterInterface):
 		for instance in protected_instance_list:
 			self.deleteInstance(instance.id)
 	#list Instance
-	def getAllInstanceInfo(self,send_flag):
+	def getAllInstanceInfo(self):
 		legal_instance = []
 		illegal_instance = []
 		try:
