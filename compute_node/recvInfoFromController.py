@@ -31,7 +31,10 @@ class recvIPThread(threading.Thread):
         cluster_list = self.server.listCluster()
         for cluster in cluster_list:
             clusterId = cluster[0]
-            instance_list = self.server.listInstance(clusterId,False)["instanceList"]
+            try:
+                instance_list = self.server.listInstance(clusterId,False)["instanceList"]
+            except:
+                instance_list = []
             print "HA instacne list:",instance_list
             for instance in instance_list:
                 if self.host in instance[2] :
