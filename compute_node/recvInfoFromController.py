@@ -44,7 +44,7 @@ class recvIPThread(threading.Thread):
         HAInstance.init()
         for instance in instance_list[:]:
             # [self.id, self.name, self.host, self.status, self.network]
-            vm = Instance(ha_instance=instance)
+            vm = Instance(ha_instance = instance)
             HAInstance.addInstance(vm)
 
             #self.writelog(ha_vm)

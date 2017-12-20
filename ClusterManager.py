@@ -184,7 +184,7 @@ class ClusterManager():
 		if not cluster:
 			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
 		try:
-			instance_list, illegal_instance = cluster.getAllInstanceInfo(send)
+			instance_list, illegal_instance = cluster.getAllInstanceInfo()
 			#delete illegal instance
 			if illegal_instance != []:
 				for instance in illegal_instance:
