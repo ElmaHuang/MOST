@@ -169,7 +169,7 @@ class Cluster(ClusterInterface):
 			else:
 				return True
 		except Exception as e:
-			print str(e)
+			print "Cluster--_checkInstance-exception--"+str(e)
 			return False
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
