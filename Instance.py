@@ -26,8 +26,11 @@ class Instance(object):
 		self.network = self.nova_client.getInstanceNetwork(self.id)
 
 	def getInfo(self):
-		self.updateInfo()
-		return [self.id, self.name, self.host, self.status,self.network]
+		try:
+			self.updateInfo()
+			return [self.id, self.name, self.host, self.status,self.network]
+		except:
+			print "instance--getInfo-fail"
 	'''
 	def sendUpdate(self):
 		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

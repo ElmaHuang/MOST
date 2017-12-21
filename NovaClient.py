@@ -76,11 +76,6 @@ class NovaClient (object):
 			return vm
 		except Exception as e:
 			print "novaclient--getvm-exception:",str(e)
-			# cluster_list = ClusterManager.getClusterList()
-			# for id,cluster in cluster_list.iteritems():
-			# 	for instance in cluster.instance_list[:]:
-			# 		if instance.id == id:
-			# 			ClusterManager.deleteInstance(cluster.id,instance.id)
 
 	def getInstanceListByNode(self, node_name):
 		ret = []
