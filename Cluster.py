@@ -140,13 +140,11 @@ class Cluster(ClusterInterface):
 		try:
 			for instance in self.instance_list[:]:
 				prev_host = instance.host
-				info = instance.getInfo()
-				host = info[2]
-				if "SHUTOFF" in info:
-					illegal_instance.append((info[0], prev_host, host))
-				elif host not in self.getAllNodeStr():
-					illegal_instance.append((info[0], prev_host, host))
+				check_instance_result = self._checkInstacne(instance)
+				if check_instance_result == False:
+					illegal_instance.append((instance.id, prev_host))
 				else:
+					info = instance.getInfo()
 					legal_instance.append(info)
 				'''	
 				if send_flag == True:
@@ -159,6 +157,20 @@ class Cluster(ClusterInterface):
 			print "cluster--getAllInstanceInfo fail:",str(e)
 		finally:
 			return legal_instance,illegal_instance
+
+	def _checkInstacne(self, instance):
+		try:
+			instance_info = instance.getInfo()
+			host = instance_info[2]
+			if "SHUTOFF" in instance_info:
+				return False
+			elif host not in self.getAllNodeStr():
+				return False
+			else:
+				return True
+		except Exception as e:
+			print str(e)
+			return False
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:

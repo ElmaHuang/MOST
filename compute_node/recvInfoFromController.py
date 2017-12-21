@@ -33,12 +33,18 @@ class recvIPThread(threading.Thread):
             clusterId = cluster[0]
             try:
                 instance_list = self.server.listInstance(clusterId,False)["instanceList"]
-            except:
+            except Exception as e:
+                print "get ha instance fail"+ str(e)
                 instance_list = []
             print "HA instacne list:",instance_list
-            for instance in instance_list:
-                if self.host in instance[2] :
-                    host_instance.append(instance)
+            host_instance = self._getInstanceByNode(instance_list)
+        return host_instance
+
+    def _getInstanceByNode(self,instance_list):
+        host_instance = []
+        for instance in instance_list:
+            if self.host in instance[2]:
+                host_instance.append(instance)
         return host_instance
 
     def updateHAInstance(self):
