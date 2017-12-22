@@ -42,11 +42,11 @@ class Operator(object):
 			try:
 				ipmi_result=self.ipmi_module.startNode(node_name)
 				if ipmi_result["code"] == "0":
-					boot_up = self._check_node_boot(node_name,default_wait_time)
+					boot_up = self._checkNodeBootSuccess(node_name,default_wait_time)
 					if boot_up :
 						message += "start node success.The node is %s." % node_name
 						logging.info(message)
-						detection = self. _check_node_detectionagent(node_name, default_wait_time)
+						detection = self. _checkDetectionAgent(node_name, default_wait_time)
 						if not detection:
 							message += "detectionagent in computing node is fail."
 						result = {"code": "0", "node_name": node_name, "message": message}
@@ -95,7 +95,7 @@ class Operator(object):
 				if ipmi_result["code"] == "0":
 					message += "reboot node success.The node is %s." % node_name
 					logging.info(message)
-					detection = self._check_node_detectionagent(node_name,default_wait_time)
+					detection = self._checkDetectionAgent(node_name,default_wait_time)
 					if not detection :
 						message += "detectionagent in computing node is fail."
 					result = {"code": "0", "node_name": node_name, "message": message}
@@ -143,7 +143,7 @@ class Operator(object):
 					return False
 		return True
 
-	def _check_node_boot(self,nodeName,check_timeout):
+	def _checkNodeBootSuccess(self,nodeName,check_timeout):
 		#check power statue in IPMIModule
 		status = False
 		while not status:
@@ -160,7 +160,7 @@ class Operator(object):
 		return status
 
 
-	def _check_node_detectionagent(self, nodeName, check_timeout):
+	def _checkDetectionAgent(self, nodeName, check_timeout):
 		#not be protect(not connect socket)
 		#check detection agent
 		status = False
