@@ -6,7 +6,7 @@ from Instance import Instance
 from HAInstance import HAInstance
 
 
-class recvIPThread(threading.Thread):
+class ReceiveInfoFromController(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.s = socket.socket(socket.AF_INET , socket.SOCK_STREAM)

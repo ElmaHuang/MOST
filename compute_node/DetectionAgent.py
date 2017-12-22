@@ -4,7 +4,7 @@ import sys
 import ConfigParser
 import xmlrpclib
 import time
-from recvInfoFromController import recvIPThread
+from ReceiveInfoFromController import ReceiveInfoFromController
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
 
@@ -141,12 +141,11 @@ class PollingHandler(asyncore.dispatcher):
                     host_instance.append(instance)
         return host_instance
     '''
-
 def main():
     #agent = DetectionAgent()
     #agent.startListen()
     host_detection = HostFailures()
-    recv = recvIPThread()
+    recv = ReceiveInfoFromController()
     recv.start()
     instance_detection = InstanceFailure()
     instance_detection.start()
