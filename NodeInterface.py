@@ -68,7 +68,7 @@ class NodeInterface(object):
 		so.close()
 
 if __name__ == "__main__":
-	a = NodeInterface("compute1" , "23" , True)
+	a = NodeInterface("compute1" , "23")
 	a.startDetectionThread()
 	while True:
 		pass
