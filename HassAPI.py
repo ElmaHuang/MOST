@@ -58,7 +58,6 @@ class HassAPI():
             print self.instance_table
 
     def Input_Command(self):
-
         self.parser = argparse.ArgumentParser(description='Openstack high availability software service(HASS)')
         self.subparsers = self.parser.add_subparsers(help='functions of HASS', dest='command')
 
@@ -227,7 +226,6 @@ class HassAPI():
                 #return
             #return result["code"]+";"+result["instanceList"]
             #self.showTable(self.HASS_result, self.TABLE.INSTANCE)
-
 
 def main():
     hassapi=HassAPI()

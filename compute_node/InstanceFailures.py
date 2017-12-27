@@ -92,9 +92,9 @@ class InstanceFailure(threading.Thread):
     def _checkVMWatchdog(self, connect,domain, action, opaque):
         print "domain name:",domain.name()," domain id:",domain.ID(),"action:",action
         recovery_type = "Watchdog"
-        watchdogString  = InstanceEvent.Event_watchdog_action
+        watchdog_string  = InstanceEvent.Event_watchdog_action
         #print "watchdog event string:",watchdogString
-        if action in watchdogString:
+        if action in watchdog_string:
             self.fail_instance.append([domain.name(),action,recovery_type])
         #print "fail instance--WD:",self.fail_instance
 
