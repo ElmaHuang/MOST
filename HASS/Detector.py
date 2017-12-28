@@ -9,13 +9,15 @@
 #:Description:
 #	This is a class which contains detect functions.
 ##########################################################
+import ConfigParser
+import logging
 import socket
 import subprocess
-import State
 import time
-import logging
-import ConfigParser
+
+import State
 from IPMIModule import IPMIManager
+
 
 class Detector(object):
 	def __init__(self, node, port):

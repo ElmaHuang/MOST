@@ -12,14 +12,16 @@
 #	This is a class maintains IPMI command operation
 ##########################################################
 
-import subprocess
-import logging
-import time
 import ConfigParser
+import logging
 import re
+import subprocess
+import time
+
 import IPMIConf
 
-class IPMIManager(object):  
+
+class IPMIManager(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')

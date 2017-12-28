@@ -1,11 +1,14 @@
-import libvirt
 import subprocess
 import threading
 import time
+
+import libvirt
+
 # import ConfigParse
 import InstanceEvent
-from RecoveryInstance import RecoveryInstance
 from HAInstance import HAInstance
+from RecoveryInstance import RecoveryInstance
+
 
 class InstanceFailure(threading.Thread):
     def __init__(self):

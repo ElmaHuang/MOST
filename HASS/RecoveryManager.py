@@ -11,15 +11,17 @@
 ##########################################################
 
 
-from ClusterManager import ClusterManager
-from NovaClient import NovaClient
-from Detector import Detector
-from DatabaseManager import IIIDatabaseManager
-import State
-import logging
 import ConfigParser
-import time
+import logging
 import subprocess
+import time
+
+import State
+from ClusterManager import ClusterManager
+from DatabaseManager import IIIDatabaseManager
+from Detector import Detector
+from NovaClient import NovaClient
+
 
 class RecoveryManager(object):
 	def __init__(self):
@@ -27,10 +29,10 @@ class RecoveryManager(object):
 		self.config = ConfigParser.RawConfigParser()
 		self.config.read('hass.conf')
 		self.recover_function = {State.NETWORK_FAIL : self.recoverNetworkIsolation,
-								 State.SERVICE_FAIL : self.recoverServiceFail,
-								 State.POWER_FAIL : self.recoverPowerOff,
-								 State.SENSOR_FAIL : self.recoverSensorCritical,
-								 State.OS_FAIL : self.recoverOSHanged}
+                                 State.SERVICE_FAIL : self.recoverServiceFail,
+                                 State.POWER_FAIL : self.recoverPowerOff,
+                                 State.SENSOR_FAIL : self.recoverSensorCritical,
+                                 State.OS_FAIL : self.recoverOSHanged}
 		self.iii_support = self.config.getboolean("iii","iii_support")
 		self.iii_database = None
 

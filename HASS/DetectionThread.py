@@ -10,17 +10,14 @@
 #   This is a class which detects whether computing nodes happens error or not.
 ##########################################################
 
-import sys
+import ConfigParser
 import threading
 import time
-import logging
-import ConfigParser
-import argparse
 import xmlrpclib
-import json
-import State
 
+import State
 from Detector import Detector
+
 
 class DetectionThread(threading.Thread):
     def __init__(self, cluster_id, node, port, polling_interval):
