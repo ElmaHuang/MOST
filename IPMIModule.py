@@ -206,7 +206,7 @@ class IPMIManager(object):
         for _ in range(3):
             initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
             present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
-            if initial or present == False:
+            if initial == False or present == False:
                 return "Error"
             if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
                 return "Error"

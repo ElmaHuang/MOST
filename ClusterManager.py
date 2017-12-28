@@ -179,7 +179,7 @@ class ClusterManager():
 				result = {"code": "1", "clusterId":cluster_id, "message":message}
 				return result
 	@staticmethod
-	def listInstance(cluster_id,send):
+	def listInstance(cluster_id,send = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			raise Exception("ClusterManager--listInstance,get instance list fail , not find the cluster %s" % cluster_id)
