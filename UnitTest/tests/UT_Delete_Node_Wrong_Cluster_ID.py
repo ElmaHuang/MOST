@@ -1,4 +1,6 @@
-from MOST.ClusterManager import ClusterManager
+import sys
+sys.path.insert(0,'/home/controller/Desktop/MOST/HASS')
+from ClusterManager import ClusterManager
 import time
 
 CLUSTER_NAME = "cluster01"

@@ -1,4 +1,6 @@
-from MOST.ClusterManager import ClusterManager
+import sys
+sys.path.insert(0,'/home/controller/Desktop/MOST/HASS')
+from ClusterManager import ClusterManager
 
 NODE_NAME = ["compute1"]
 

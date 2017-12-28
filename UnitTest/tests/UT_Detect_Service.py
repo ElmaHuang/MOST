@@ -1,5 +1,7 @@
-from MOST.DetectionThread import DetectionThread
-from MOST.Node import Node
+import sys
+sys.path.insert(0,'/home/controller/Desktop/MOST/HASS')
+from DetectionThread import DetectionThread
+from Node import Node
 import Preprocess
 import Postprocess
 import Config

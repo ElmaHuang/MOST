@@ -1,6 +1,8 @@
-from MOST.DetectionThread import DetectionThread
-from MOST.IPMIModule import IPMIManager
-from MOST.Node import Node
+import sys
+sys.path.insert(0,'/home/controller/Desktop/MOST/HASS')
+from DetectionThread import DetectionThread
+from IPMIModule import IPMIManager
+from Node import Node
 import Preprocess
 import Postprocess
 import Config
