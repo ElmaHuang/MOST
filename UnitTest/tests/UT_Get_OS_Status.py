@@ -1,4 +1,6 @@
-from MOST.IPMIModule import IPMIManager
+import sys
+sys.path.insert(0,'/home/controller/Desktop/MOST/HASS')
+from IPMIModule import IPMIManager
 
 HOST = "compute3"
 
