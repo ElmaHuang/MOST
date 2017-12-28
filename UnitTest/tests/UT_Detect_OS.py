@@ -12,7 +12,7 @@ import time
 
 
 CLUSTER_ID = "clusterid"
-HOST = "compute3"
+HOST = "compute4"
 PORT = 2468
 
 def run(check_timeout = 300):
@@ -21,7 +21,7 @@ def run(check_timeout = 300):
 	client = _create_ssh_client(HOST)
 	ipmi_manager = IPMIManager()
 
-	_remote_exec(client, "sudo kill -segv 1 && sudo kill -segv 1")
+	_remote_exec(client, "python /home/"+HOST+"/Desktop/test.py")
 	detect_time = 5
 	try:
 		while detect_time > 0:

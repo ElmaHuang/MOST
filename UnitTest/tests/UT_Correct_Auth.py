@@ -9,6 +9,7 @@ auth = "http://"+config.get("rpc", "rpc_username")+":"+config.get("rpc", "rpc_pa
 
 def run():
 	try:
+		Preprocess.server_start(False)
 		server = xmlrpclib.ServerProxy(auth)
 		response = server.test_auth_response()
 		if response == "auth success":
