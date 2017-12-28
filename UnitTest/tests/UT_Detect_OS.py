@@ -20,9 +20,12 @@ def run(check_timeout = 300):
 	thread = node.detection_thread
 	client = _create_ssh_client(HOST)
 	ipmi_manager = IPMIManager()
-
-	_remote_exec(client, "python /home/"+HOST+"/Desktop/test.py")
-	detect_time = 5
+	try:
+		i,o,e = _remote_exec(client, "cd /home/"+HOST+"/Desktop/MOST/HASS/compute_node/ ; sh test.sh")
+		print o.read()
+	except Exception as e:
+		print str(e)
+	detect_time = 30
 	try:
 		while detect_time > 0:
 			fail = thread.detect()
