@@ -38,14 +38,12 @@ class DetectionThread(threading.Thread):
         self.server = xmlrpclib.ServerProxy(self.authUrl)
 
     def run(self):
-        data = ""
-        failure_occured_time = 0
-        failure_detection_time = 0
         while not self.loop_exit:
             state = self.detect()
             print "["+ self.node.name + "] "+state
 
             if state != State.HEALTH:
+                logging.error("["+ self.node.name + "] "+state)
                 try:
                     recover_success = self.server.recover(state, self.cluster_id, self.node.name)
                     if recover_success: # recover success
@@ -58,6 +56,7 @@ class DetectionThread(threading.Thread):
                 except Exception as e:
                     print "Exception : " + str(e)
                     self.stop()
+                self.server.updateDB()
             time.sleep(self.polling_interval)
 
     def stop(self):
@@ -65,7 +64,8 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         highest_level_check = self.function_map[-1]
-
+        if self.detector.checkSensorStatus() != State.HEALTH:
+            return State.SENSOR_FAIL
         if highest_level_check() != State.HEALTH:
             state = self.verify(highest_level_check)
             if state == State.HEALTH:
