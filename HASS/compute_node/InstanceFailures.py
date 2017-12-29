@@ -1,9 +1,7 @@
 import subprocess
 import threading
 import time
-
 import libvirt
-
 # import ConfigParse
 import InstanceEvent
 from HAInstance import HAInstance
@@ -15,7 +13,8 @@ class InstanceFailure(threading.Thread):
         threading.Thread.__init__(self)
         #self.host = host
         self.recovery_vm = RecoveryInstance()
-        self.fail_instance = []
+        self.failed_instances = []
+        #failed_instance
         '''
         while True:
             self._startDetection()
@@ -29,9 +28,11 @@ class InstanceFailure(threading.Thread):
     def run(self):
         while True:
             try:
-                libvirt_connect = self.createDetectionThread()
-                libvirt_connect.domainEventRegister(self._checkVMState,None) #event handler(callback,self)
-                libvirt_connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
+                self.createLibvirtDetectionThread()
+                #libvirt_connection
+                libvirt_connection = self.getLibvirtConnection()
+                libvirt_connection.domainEventRegister(self._checkVMState,None) #event handler(callback,self)
+                libvirt_connection.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
                 #Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
 
                 #self._checkNetwork()
@@ -40,37 +41,41 @@ class InstanceFailure(threading.Thread):
             finally:
                 while True:
                     time.sleep(5)
-                    if self.fail_instance != []:
+                    if self.failed_instances != []:
                         #libvirt_connect.close()
                         try:
-                            result = self.recoverInstance()
+                            result = self.recoverFailedInstance()
                             if not result:
-                                print "recovery "+str(self.fail_instance) +"fail or the instance is not HA instance."
+                                print "recovery "+str(self.failed_instances) +"fail or the instance is not HA instance."
                             else:
                                 print "recovery "+str(self.fail_instance) +" success"
                         except Exception as e :
                             print str(e)
                         finally:
                             self.fail_instance = []
-                    elif not libvirt_connect.isAlive():
+                    elif not libvirt_connection.isAlive():
                         break
                 #time.sleep(5)
 
-    def createDetectionThread(self):
+    def createLibvirtDetectionThread(self):
         try:
             # set event loop thread
             libvirt.virEventRegisterDefaultImpl()
             eventLoopThread = threading.Thread(target=self.__virEventLoopNativeRun, name="libvirtEventLoop")
             eventLoopThread.setDaemon(True)
             eventLoopThread.start()
+        except Exception as e:
+            print "failed to create libvirt detection thread "+ str(e)
 
-            connect = libvirt.openReadOnly('qemu:///system')
-            if connect == None:
+    def getLibvirtConnection(self):
+        try:
+            connection = libvirt.openReadOnly('qemu:///system')
+            if connection == None:
                 print "failed to open connection to qemu:///system"
             else:
-                return connect
+                return connection
         except Exception as e:
-            return str(e)
+            print "failed to open connection --exception"+str(e)
 
     def _checkVMState(self, connect, domain, event, detail, opaque):
         #event:cloume,detail:row
@@ -80,8 +85,8 @@ class InstanceFailure(threading.Thread):
         failedString = InstanceEvent.Event_failed
         print "state event string :",event_string
         if event_string in failedString:
-            self.fail_instance.append([domain.name(),event_string,recovery_type])
-        #print "fail instance--State:",self.fail_instance
+            self.failed_instances.append([domain.name(),event_string,recovery_type])
+        #print "fail instance--State:",self.failed_instances
 
     def _checkNetwork(self):
         recovery_type = "Network"
@@ -92,7 +97,7 @@ class InstanceFailure(threading.Thread):
                 response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
                                       universal_newlines=True)
             except subprocess.CalledProcessError:
-                self.fail_instance.append([instance.name,ip,recovery_type])
+                self.failed_instances.append([instance.name,ip,recovery_type])
 
     def _checkVMWatchdog(self, connect,domain, action, opaque):
         print "domain name:",domain.name()," domain id:",domain.ID(),"action:",action
@@ -100,22 +105,22 @@ class InstanceFailure(threading.Thread):
         watchdog_string  = InstanceEvent.Event_watchdog_action
         #print "watchdog event string:",watchdogString
         if action in watchdog_string:
-            self.fail_instance.append([domain.name(),action,recovery_type])
-        #print "fail instance--WD:",self.fail_instance
+            self.failed_instances.append([domain.name(),action,recovery_type])
+        #print "fail instance--WD:",self.failed_instances
 
     def transformDetailToString(self,event,detail):
         stateString = InstanceEvent.Event_string
         return stateString[event][detail]
 
-    def recoverInstance(self):
+    def recoverFailedInstance(self):
         print "get ha vm"
         ha_instance = HAInstance.getInstanceList()
         print "ha list :",ha_instance
         #check instance is protected
         self.checkRecoveryVM(ha_instance)
         #any instance shoule be recovery
-        if self.fail_instance != []:
-            for fail_instance in self.fail_instance:
+        if self.failed_instances != []:
+            for fail_instance in self.failed_instances:
                 try:
                     result = self.recovery_vm.recoverInstance(fail_instance)
                     return result
@@ -125,13 +130,13 @@ class InstanceFailure(threading.Thread):
             return True
 
     def checkRecoveryVM(self,ha_instance):
-        #find all fail_vm in self.fail_instacne is ha vm or not
+        #find all fail_vm in self.failed_instances is ha vm or not
         if ha_instance == {}:
             return
-        for fail_vm in self.fail_instance[:]:
+        for failed_vm in self.failed_instances[:]:
             for id,instance in ha_instance.iteritems():
-                if fail_vm[0] not in instance.name:
-                    self.fail_instance.remove(fail_vm)
+                if failed_vm[0] not in instance.name:
+                    self.failed_instances.remove(failed_vm)
 
     '''
     def readlog(self):

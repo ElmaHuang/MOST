@@ -6,24 +6,20 @@ class RecoveryInstance(object):
     def __init__(self):
         self.nova_client = NovaClient.getInstance()
         self.vm_name = None
-        self.fail_info = None
+        self.failed_info = None
         self.recovery_type = None
 
     def recoverInstance(self,fail_vm):
-        #fail_vm = ['instance-00000344', 43, 'Failed']
+        #fail_vm = ['instance-00000344', 'Failed',State]
         self.vm_name = fail_vm[0]
-        self.fail_info = fail_vm[1]
+        self.failed_info = fail_vm[1]
         self.recovery_type = fail_vm[2]
-        result = self.findFailure()
-        return result
-
-    def findFailure(self):
         if "State" or "Watchdog" in self.recovery_type:
             result = self.hardRebootInstance(self.vm_name)
             return result
             #self.softReboot()
         elif "Network" in self.recovery_type:
-            result = self.softRebootInstance()
+            result = self.softRebootInstance(self.vm_name)
             if result:
                 print "soft reboot successfully"
                 result = self.pingInstance(self.vm_name)
@@ -34,7 +30,6 @@ class RecoveryInstance(object):
     def hardRebootInstance(self,fail_instance_name):
         instance = self.getHAInstance(fail_instance_name)
         self.nova_client.hardReboot(instance.id)
-        #command = "virsh reset "+ instance.name
         result = self.checkState(instance.id)
         return result
 
