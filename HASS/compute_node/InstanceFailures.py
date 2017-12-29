@@ -53,7 +53,8 @@ class InstanceFailure(threading.Thread):
                             print str(e)
                         finally:
                             self.fail_instance = []
-                    elif not libvirt_connection.isAlive():
+                    elif not libvirt_connection.isAlive() == 1:
+                        #1 if alive, 0 if dead, -1 on error
                         break
                 #time.sleep(5)
 
