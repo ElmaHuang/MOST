@@ -21,7 +21,7 @@ def run(check_timeout = 300):
 	client = _create_ssh_client(HOST)
 	ipmi_manager = IPMIManager()
 	try:
-		i,o,e = _remote_exec(client, "cd /home/"+HOST+"/Desktop/MOST/HASS/compute_node/ ; sh test.sh")
+		i,o,e = _remote_exec(client, "cd /home/"+HOST+"/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh")
 		print o.read()
 	except Exception as e:
 		print str(e)
