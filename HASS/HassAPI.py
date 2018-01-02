@@ -223,10 +223,6 @@ class HassAPI():
                     raise Exception
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
-                #return
-            #return result["code"]+";"+result["instanceList"]
-            #self.showTable(self.HASS_result, self.TABLE.INSTANCE)
-
 def main():
     hassapi=HassAPI()
     hassapi.Input_Command()

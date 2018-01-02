@@ -10,7 +10,7 @@
 #	This is a class which maintains cluster data structure.
 ##########################################################
 from ClusterInterface import ClusterInterface
-#from DetectionManager import DetectionManager
+from Response import Response
 from Node import Node
 from Instance import Instance
 import logging
@@ -33,7 +33,10 @@ class Cluster(ClusterInterface):
 					node.startDetectionThread()
 					message = "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
 					logging.info(message)
-					result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
+					#result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
+					result = Response(code = "succeed",
+									  message = message,
+									  data = {"cluster_id":self.id, "node":node_name})
 				else:
 					message += "the node %s is illegal.  " %node_name
 					logging.error(message)
@@ -41,7 +44,10 @@ class Cluster(ClusterInterface):
 			print str(e)
 			message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
-			result = {"code": "1", "clusterId": self.id, "message": message}
+			#result = {"code": "1", "clusterId": self.id, "message": message}
+			result = Response(code = "failed",
+							  message = message,
+							  data = {"cluster_id": self.id})
 		finally:
 			return result
 
@@ -57,12 +63,18 @@ class Cluster(ClusterInterface):
 				if node.name == node_name:raise Exception
 			message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(),self.id)
 			logging.info(message)
-			result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
+			#result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
+			result = Response(code = "succeed",
+							  message = message,
+							  data = {"cluster_id": self.id, "node": node_name})
 		except Exception as e:
 			print str(e)
 			message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (node_name,self.getAllNodeStr())
 			logging.error(message)
-			result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
+			#result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
+			result = Response(code = "failed",
+							  message = message,
+							  data = {"cluster_id": self.id, "node": node_name})
 		finally:
 			return result
 
@@ -73,7 +85,6 @@ class Cluster(ClusterInterface):
 		return ret
 
 	def addInstance(self , instance_id):
-		#self.host = None
 		#if self.isProtected(instance_id): # check instance is already being protected
 			#raise Exception("this instance is already being protected!")
 		if  not self.checkInstanceExist(instance_id):
@@ -88,20 +99,26 @@ class Cluster(ClusterInterface):
 				#print "start live migration"
 				final_host = self.checkInstanceHost(instance_id)
 				if final_host == None:final_host=self.liveMigrateInstance(instance_id)
-				instance = Instance(id=instance_id,
-									name=self.nova_client.getInstanceName(instance_id),
-									host=final_host,
+				instance = Instance(id = instance_id,
+									name = self.nova_client.getInstanceName(instance_id),
+									host = final_host,
 									)
 				self.sendUpdateInstance(final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
-				result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
+				#result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
+				result = Response(code = "succeed",
+								  message = message,
+								  data = {"cluster_id": self.id, "node": final_host, "instance_id": instance_id})
 			except Exception as e:
 				print str(e)
 				message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (instance_id)
 				logging.error(message)
-				result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
+				#result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
+				result = Response(code="failed",
+								  message=message,
+								  data={"cluster_id": self.id, "instance_id": instance_id})
 			finally:
 				return result
 
@@ -115,17 +132,26 @@ class Cluster(ClusterInterface):
 					if send_flag == True : self.sendUpdateInstance(host)
 					message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 					logging.info(message)
-					result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+					#result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+					result = Response(code = "succeed",
+									  message = message,
+									  data = {"cluster_id": self.id, "instance_id": instance_id})
 			#if instanceid not in self.instacne_list:
 			if result == None:
 				message = "Cluster--delete instance fail ,please check again! The instance id is %s." % instance_id
 				logging.error(message)
-				result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+				#result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+				result = Response(code = "failed",
+								  message = message,
+								  data = {"cluster_id": self.id, "instance_id": instance_id})
 		except Exception as e:
 			print str(e)
 			message = "Cluster--delete instance fail . The instance id is %s." % instance_id
 			logging.error(message)
-			result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+			#result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+			result = Response(code = "failed",
+							  message = message,
+							  data = {"cluster_id": self.id, "instance_id": instance_id})
 		finally:
 			return result
 
@@ -146,13 +172,6 @@ class Cluster(ClusterInterface):
 				else:
 					info = instance.getInfo()
 					legal_instance.append(info)
-				'''	
-				if send_flag == True:
-					if prev_host in self.getAllNodeStr():
-						self.sendUpdateInstance(prev_host)
-					if host in self.getAllNodeStr():
-						self.sendUpdateInstance(host)
-				'''
 		except Exception as e:
 			print "cluster--getAllInstanceInfo fail:",str(e)
 		finally:
@@ -274,7 +293,7 @@ class Cluster(ClusterInterface):
 		#if host == None: print "get vm host fail"
 		target_host = self.findTargetHost(host)
 		print "start live migrate vm from ",host,"to ",target_host.name
-		final_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)
+		final_host = self.nova_client.liveMigrateVM(instance_id,target_host.name)
 		#print final_host
 		return final_host
 
