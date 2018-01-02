@@ -113,7 +113,10 @@ class ClusterManager():
             except:
                 message += "add node fail. node not found. (node_name = %s)" % node_name_list
                 logging.error(message)
-                result = {"code": "1", "clusterId": cluster_id, "message": message}
+                # result = {"code": "1", "clusterId": cluster_id, "message": message}
+                result = Response(code="failed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id})
                 return result
 
     @staticmethod
@@ -121,7 +124,10 @@ class ClusterManager():
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message = "delete the node failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-            result = {"code": "1", "clusterId": cluster_id, "message": message}
+            # result = {"code": "1", "clusterId": cluster_id, "message": message}
+            result = Response(code="failed",
+                              message=message,
+                              data={"cluster_id": cluster_id})
             return result
         else:
             try:
@@ -135,7 +141,10 @@ class ClusterManager():
                 # code = "1"
                 message = "delete node fail. node not found. (node_name = %s)" % node_name
                 logging.error(message)
-                result = {"code": "1", "clusterId": cluster_id, "message": message}
+                # result = {"code": "1", "clusterId": cluster_id, "message": message}
+                result = Response(code="failed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id})
                 return result
 
     @staticmethod
@@ -143,9 +152,12 @@ class ClusterManager():
         # nodelist=[]
         try:
             cluster = ClusterManager.getCluster(cluster_id)
-            nodelist = cluster.getAllNodeInfo()
+            node_list = cluster.getAllNodeInfo()
             logging.info("ClusterManager-listNode--get all node info finish")
-            result = {"code": "0", "nodeList": nodelist}
+            # result = {"code": "0", "nodeList": nodelist}
+            result = Response(code="succeed",
+                              message=None,
+                              data={"node_list": node_list})
             return result
         except:
             logging.error("ClusterManager--listNode-- get all node info fail")
@@ -156,7 +168,10 @@ class ClusterManager():
         message = ""
         if not cluster:
             message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-            result = {"code": "1", "clusterId": cluster_id, "message": message}
+            # result = {"code": "1", "clusterId": cluster_id, "message": message}
+            result = Response(code="failed",
+                              message=message,
+                              data={"cluster_id": cluster_id})
             return result
         else:
             try:
@@ -173,7 +188,10 @@ class ClusterManager():
                 message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" % (
                     instance_id, cluster_id)
                 logging.error(message)
-                result = {"code": "1", "clusterId": cluster_id, "message": message}
+                # result = {"code": "1", "clusterId": cluster_id, "message": message}
+                result = Response(code="failed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id})
                 return result
 
     @staticmethod
@@ -181,7 +199,10 @@ class ClusterManager():
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-            result = {"code": "1", "clusterId": cluster_id, "instance id ": instance_id, "message": message}
+            # result = {"code": "1", "clusterId": cluster_id, "instance id ": instance_id, "message": message}
+            result = Response(code="failed",
+                              message=message,
+                              data={"cluster_id": cluster_id, "instance_id": instance_id})
             return result
         else:
             try:
@@ -194,7 +215,10 @@ class ClusterManager():
                 message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
                 print str(e)
                 logging.error(message)
-                result = {"code": "1", "clusterId": cluster_id, "message": message}
+                #result = {"code": "1", "clusterId": cluster_id, "message": message}
+                result = Response(code="failed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id, "instance_id": instance_id})
                 return result
 
     @staticmethod
@@ -216,12 +240,18 @@ class ClusterManager():
                 for instance in illegal_instance[:]:
                     cluster.sendUpdateInstance(instance[1])  # prev_host
             logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
-            result = {"code": "0", "instanceList": instance_list}
+            #result = {"code": "0", "instanceList": instance_list}
+            result = Response(code="succeed",
+                              message=None,
+                              data={"instance_list": instance_list})
             return result
         except Exception as e:
             print str(e)
-            result = {"code": "1", "instanceList": []}
-            logging.error("ClusterManager--listInstance,getInstanceList fail")
+            #result = {"code": "1", "instanceList": []}
+            result = Response(code="failed",
+                              message=str(e),
+                              data={"instance_list": instance_list})
+            logging.error("ClusterManager--listInstance,getInstanceList fail"+str(e))
             return result
 
     @staticmethod
@@ -233,7 +263,10 @@ class ClusterManager():
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
                 logging.info(message)
-                result = {"code": "0", "clusterId": cluster_id, "message": message}
+                #result = {"code": "0", "clusterId": cluster_id, "message": message}
+                result = Response(code="succeed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id})
                 return result
             else:
                 # start add to cluster list
@@ -242,12 +275,18 @@ class ClusterManager():
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
                 logging.info(message)
-                result = {"code": "0", "clusterId": cluster_id, "message": message}
+                #result = {"code": "0", "clusterId": cluster_id, "message": message}
+                result = Response(code="succeed",
+                                  message=message,
+                                  data={"cluster_id": cluster_id})
                 return result
         except:
             message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" % cluster_id
             logging.error(message)
-            result = {"code": "1", "clusterId": cluster_id, "message": message}
+            #result = {"code": "1", "clusterId": cluster_id, "message": message}
+            result = Response(code="failed",
+                              message=message,
+                              data={"cluster_id": cluster_id})
             return result
 
     @staticmethod
@@ -319,12 +358,3 @@ class ClusterManager():
 if __name__ == "__main__":
     ClusterManager.init()
     ClusterManager.deleteCluster("8c46ecee-9bd6-4c82-b7c8-6b6d20dc09d7")
-
-    '''
-    @staticmethod
-    def getProtectedInstanceList(cluster_id):
-        cluster = ClusterManager.getCluster(cluster_id)
-        if not cluster:
-            raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
-        return cluster.getProtectedInstanceList()
-    '''
