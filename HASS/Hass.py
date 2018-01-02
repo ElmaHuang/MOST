@@ -26,23 +26,24 @@ from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
 
+
 class RequestHandler(SimpleXMLRPCRequestHandler):
-#   Handle RPC request from remote user, and suport access authenticate. 
-#
-#   HTTP basic access authentication are encoded with Base64 in transit, but not
-#   encrypted or hashed in any way. Authentication field contain authentication
-#   method, username and password combined into a string. If request not contain
-#   authentication header or contain not correct username and password, it will
-#   return 401 error code. Otherwise, handle request and return response.
+    #   Handle RPC request from remote user, and suport access authenticate.
+    #
+    #   HTTP basic access authentication are encoded with Base64 in transit, but not
+    #   encrypted or hashed in any way. Authentication field contain authentication
+    #   method, username and password combined into a string. If request not contain
+    #   authentication header or contain not correct username and password, it will
+    #   return 401 error code. Otherwise, handle request and return response.
 
     def __init__(self, request, client_address, server):
-    # initialize rpc server and get client ip address. call parent initial method.
+        # initialize rpc server and get client ip address. call parent initial method.
         rpc_paths = ('/RPC2',)
         self.clientip = client_address[0]
         SimpleXMLRPCRequestHandler.__init__(self, request, client_address, server)
-        
+
     def authenticate(self, headers):
-    # split authentication header, decode with Base64 and check username and password
+        # split authentication header, decode with Base64 and check username and password
         auth = headers.get('Authorization')
         try:
             (basic, encoded) = headers.get('Authorization').split(' ')
@@ -58,7 +59,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
             (username, password) = decodedString.split(':')
             config = ConfigParser.RawConfigParser()
             config.read('hass.conf')
-            if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):                
+            if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):
                 print "Login"
                 return True
             else:
@@ -66,7 +67,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
                 return False
 
     def parse_request(self):
-    # parser request, get authentication header and send to authenticate().
+        # parser request, get authentication header and send to authenticate().
         if SimpleXMLRPCRequestHandler.parse_request(self):
             if self.authenticate(self.headers):
                 logging.info("Hass RequestHandler - Authentication success, request from %s", self.clientip)
@@ -77,12 +78,12 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
         else:
             logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
             return False
-        
 
-class Hass (object):
-#   The SimpleRPCServer class
-#   Declare method here, and client can call it directly.
-#   All of methods just process return data from recovery module
+
+class Hass(object):
+    #   The SimpleRPCServer class
+    #   Declare method here, and client can call it directly.
+    #   All of methods just process return data from recovery module
     def __init__(self):
         ClusterManager.init()
         self.Operator = Operator()
@@ -90,9 +91,9 @@ class Hass (object):
         self.RecoveryManager = RecoveryManager()
 
     def test_auth_response(self):
-    #Unit tester call this function to get successful message if authenticate success.
+        # Unit tester call this function to get successful message if authenticate success.
         return "auth success"
-        
+
     def createCluster(self, name, nodeList=[]):
         """
                 The function for create a HA cluster.
@@ -114,22 +115,24 @@ class Hass (object):
                     addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
 
                     if addNode_result["code"] == "0":
-                        message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (createCluster_result["clusterId"], addNode_result["message"])
+                        message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (
+                        createCluster_result["clusterId"], addNode_result["message"])
                         logging.info(message)
-                        result= {"code" : "0","message": message}
+                        result = {"code": "0", "message": message}
                         return result
                     else:
-                        #add node fail
-                        message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + addNode_result["message"]
+                        # add node fail
+                        message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + \
+                                  addNode_result["message"]
                         logging.error(message)
-                        result ={"code":"0","message":message}
+                        result = {"code": "0", "message": message}
                         return result
-                else :#nodelist is None
-                    #addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
+                else:  # nodelist is None
+                    # addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
                     logging.info(createCluster_result["message"])
                     return createCluster_result
             else:
-                #create cluster
+                # create cluster
                 logging.error("HASS-create cluster--create cluster fail")
                 return createCluster_result
         except:
@@ -282,10 +285,10 @@ class Hass (object):
                 """
         try:
             result = self.Operator.getAllInfoByNode(nodeName)
-            logging.info("HASS--get All Info from %s finish" %nodeName)
+            logging.info("HASS--get All Info from %s finish" % nodeName)
             return result
         except:
-            logging.error("HASS--get All Info from %s fail"%nodeName)
+            logging.error("HASS--get All Info from %s fail" % nodeName)
 
     def getNodeInfoByType(self, nodeName, sensorType):
         """
@@ -301,10 +304,10 @@ class Hass (object):
                 """
         try:
             result = self.Operator.getNodeInfoByType(nodeName, sensorType)
-            logging.info("HASS--get %s info from %s success"%(sensorType,nodeName))
+            logging.info("HASS--get %s info from %s success" % (sensorType, nodeName))
             return result
         except:
-            logging.error("HASS--get %s info from %s fail" %(sensorType,nodeName))
+            logging.error("HASS--get %s info from %s fail" % (sensorType, nodeName))
 
     def addInstance(self, clusterId, instanceId):
         """
@@ -344,7 +347,7 @@ class Hass (object):
         except:
             logging.error("HASS--delete instance fail")
 
-    def listInstance(self, clusterId,send = True):
+    def listInstance(self, clusterId, send=True):
         """
                 The function for list instances from HA cluster.
                 Put the cluster uuid to this function, it will list instances from HA cluster.
@@ -355,12 +358,12 @@ class Hass (object):
                     {"code":"0","instanceList":instance_list}-> success.
                 """
         try:
-            result = ClusterManager.listInstance(clusterId,send)
+            result = ClusterManager.listInstance(clusterId, send)
             logging.info("HASS-list instance success")
             return result
-        except :
+        except:
             logging.error("HASS--list instance fail")
-    
+
     def recover(self, fail_type, cluster_id, node_name):
         """
                 The function for recover compute node fail from HA cluster.
@@ -381,6 +384,7 @@ class Hass (object):
             print str(e)
             logging.error("HASS--recover node %s fail" % node_name)
 
+
 def main():
     config = ConfigParser.RawConfigParser()
     config.read('hass.conf')
@@ -391,7 +395,8 @@ def main():
     if not os.path.exists(dir):
         os.makedirs(dir)
     logging.basicConfig(filename=log_file_name, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
-    server = SimpleXMLRPCServer(('',int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler, allow_none = True, logRequests=False)
+    server = SimpleXMLRPCServer(('', int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler,
+                                allow_none=True, logRequests=False)
     server.register_introspection_functions()
     server.register_multicall_functions()
     server.register_instance(Hass(), allow_dotted_names=True)
@@ -401,6 +406,7 @@ def main():
         server.serve_forever()
     except:
         sys.exit(1)
-    
+
+
 if __name__ == "__main__":
     main()
