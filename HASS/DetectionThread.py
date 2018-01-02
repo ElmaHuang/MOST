@@ -30,8 +30,11 @@ class DetectionThread(threading.Thread):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
         self.detector = Detector(node, port)
-        self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus, self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
-        self.authUrl = "http://"+self.config.get("rpc", "rpc_username")+":"+self.config.get("rpc", "rpc_password")+"@127.0.0.1:"+self.config.get("rpc", "rpc_bind_port")
+        self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus,
+                             self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
+        self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
+                                                                                                  "rpc_password") + "@127.0.0.1:" + self.config.get(
+            "rpc", "rpc_bind_port")
         self.server = xmlrpclib.ServerProxy(self.authUrl)
 
     def run(self):
@@ -40,15 +43,15 @@ class DetectionThread(threading.Thread):
         failure_detection_time = 0
         while not self.loop_exit:
             state = self.detect()
-            print "["+ self.node.name + "] "+state
+            print "[" + self.node.name + "] " + state
 
             if state != State.HEALTH:
                 try:
                     recover_success = self.server.recover(state, self.cluster_id, self.node.name)
-                    if recover_success: # recover success
+                    if recover_success:  # recover success
                         print "recover success"
                         self.detector.connect()
-                    else: # recover fail
+                    else:  # recover fail
                         print "recover fail delete node %s from the cluster" % self.node.name
                         self.server.deleteNode(self.cluster_id, self.node.name)
                         self.stop()
@@ -62,7 +65,7 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         highest_level_check = self.function_map[-1]
-        #add detect sensor value
+        # add detect sensor value
 
         if highest_level_check() != State.HEALTH:
             state = self.verify(highest_level_check)
@@ -74,8 +77,8 @@ class DetectionThread(threading.Thread):
 
     def verify(self, func):
         index = self.function_map.index(func)
-        cloned_function_map = self.function_map[:] # clone from function map
-        cloned_function_map = cloned_function_map[0:index+1] # remove uneeded detection function
+        cloned_function_map = self.function_map[:]  # clone from function map
+        cloned_function_map = cloned_function_map[0:index + 1]  # remove uneeded detection function
         reversed_function_map = self._reverse(cloned_function_map)
 
         fail = None
@@ -93,9 +96,12 @@ class DetectionThread(threading.Thread):
         list.reverse()
         return list
 
+
 if __name__ == "__main__":
     config = ConfigParser.RawConfigParser()
     config.read('hass.conf')
-    authUrl = "http://"+config.get("rpc", "rpc_username")+":"+config.get("rpc", "rpc_password")+"@127.0.0.1:"+config.get("rpc", "rpc_bind_port")
+    authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                               "rpc_password") + "@127.0.0.1:" + config.get(
+        "rpc", "rpc_bind_port")
     server = xmlrpclib.ServerProxy(authUrl)
     server.test()
