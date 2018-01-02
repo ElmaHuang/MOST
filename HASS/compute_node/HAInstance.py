@@ -1,4 +1,3 @@
-
 class HAInstance():
     instance_list = None
 
@@ -17,6 +16,6 @@ class HAInstance():
 
     @staticmethod
     def getInstance(name):
-        for id,instance in HAInstance.instance_list.iteritems():
+        for id, instance in HAInstance.instance_list.iteritems():
             if instance.name == name:
                 return instance

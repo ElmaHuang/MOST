@@ -8,5 +8,6 @@ def main():
     time.sleep(float(200))
     os.system("sudo reboot")
 
+
 if __name__ == "__main__":
     main()

@@ -116,7 +116,7 @@ class Hass(object):
 
                     if addNode_result["code"] == "0":
                         message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (
-                        createCluster_result["clusterId"], addNode_result["message"])
+                            createCluster_result["clusterId"], addNode_result["message"])
                         logging.info(message)
                         result = {"code": "0", "message": message}
                         return result

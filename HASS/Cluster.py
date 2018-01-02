@@ -16,6 +16,7 @@ from Node import Node
 from Instance import Instance
 import logging
 
+
 class Cluster(ClusterInterface):
     def __init__(self, id, name):
         super(Cluster, self).__init__(id, name)
@@ -43,7 +44,7 @@ class Cluster(ClusterInterface):
         except Exception as e:
             print str(e)
             message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (
-            self.getAllNodeStr())
+                self.getAllNodeStr())
             logging.error(message)
             # result = {"code": "1", "clusterId": self.id, "message": message}
             result = Response(code="failed",
@@ -63,7 +64,8 @@ class Cluster(ClusterInterface):
             for node in self.node_list:
                 if node.name == node_name:
                     raise Exception
-            message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(), self.id)
+            message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (
+                node_name, self.getAllNodeStr(), self.id)
             logging.info(message)
             # result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
             result = Response(code="succeed",
@@ -72,7 +74,7 @@ class Cluster(ClusterInterface):
         except Exception as e:
             print str(e)
             message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (
-            node_name, self.getAllNodeStr())
+                node_name, self.getAllNodeStr())
             logging.error(message)
             # result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
             result = Response(code="failed",
@@ -117,7 +119,7 @@ class Cluster(ClusterInterface):
             except Exception as e:
                 print str(e)
                 message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (
-                instance_id)
+                    instance_id)
                 logging.error(message)
                 # result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
                 result = Response(code="failed",
@@ -233,7 +235,7 @@ class Cluster(ClusterInterface):
     def deleteAllNode(self):
         for node in self.node_list[:]:
             self.deleteNode(node.name)
-        # print "node list:",self.node_list
+            # print "node list:",self.node_list
 
     def getInfo(self):
         return [self.id, self.name]
@@ -271,7 +273,7 @@ class Cluster(ClusterInterface):
             if instance.id == instance_id:
                 return True
         message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (
-        instance_id, self.id, self.instance_list)
+            instance_id, self.id, self.instance_list)
         logging.error(message)
         return False
 
@@ -285,7 +287,7 @@ class Cluster(ClusterInterface):
         for instance in self.instance_list:
             instance.updateInfo()
             print "instance %s update host to %s" % (instance.name, instance.host)
-        # instance.host = host
+            # instance.host = host
 
     def checkInstanceHost(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)

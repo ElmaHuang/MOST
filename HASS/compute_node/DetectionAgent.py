@@ -8,14 +8,16 @@ from ReceiveInfoFromController import ReceiveInfoFromController
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
 
+
 class DetectionAgent():
     def __init__(self):
         pass
-        #config = ConfigParser.RawConfigParser()
-        #config.read('hass_node.conf')
-        #self.host = None
-        #self.port = int(config.get("polling","listen_port"))
-        #self.version = int(config.get("version","version"))
+        # config = ConfigParser.RawConfigParser()
+        # config.read('hass_node.conf')
+        # self.host = None
+        # self.port = int(config.get("polling","listen_port"))
+        # self.version = int(config.get("version","version"))
+
     '''   
     def startListen(self):
         print "create listen thread"
@@ -141,9 +143,11 @@ class PollingHandler(asyncore.dispatcher):
                     host_instance.append(instance)
         return host_instance
     '''
+
+
 def main():
-    #agent = DetectionAgent()
-    #agent.startListen()
+    # agent = DetectionAgent()
+    # agent.startListen()
     host_detection = HostFailures()
     recv = ReceiveInfoFromController()
     recv.start()
@@ -156,6 +160,6 @@ def main():
     except:
         sys.exit(1)
 
+
 if __name__ == "__main__":
     main()
-

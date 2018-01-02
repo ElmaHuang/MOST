@@ -4,6 +4,7 @@ import ConfigParser
 import subprocess
 import libvirt
 
+
 class HostFailures(asyncore.dispatcher):
     def __init__(self):
         asyncore.dispatcher.__init__(self)
@@ -16,7 +17,7 @@ class HostFailures(asyncore.dispatcher):
         self.set_reuse_addr()
         self.bind(('', self.port))
         self.libvirt_uri = "qemu:///system"
-        print "host failure port:",self.port
+        print "host failure port:", self.port
 
     def handle_read(self):
         data, addr = self.recvfrom(2048)
