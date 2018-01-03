@@ -11,17 +11,16 @@
 ##########################################################
 
 
-import ConfigParser
-import logging
-import subprocess
-import time
-
-import State
-from Response import Response
 from ClusterManager import ClusterManager
-from DatabaseManager import IIIDatabaseManager
-from Detector import Detector
 from NovaClient import NovaClient
+from Detector import Detector
+from DatabaseManager import IIIDatabaseManager
+from Response import Response
+import State
+import logging
+import ConfigParser
+import time
+import subprocess
 
 
 class RecoveryManager(object):
@@ -174,7 +173,7 @@ class RecoveryManager(object):
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
         print "check instance status"
-        status = self.checkInstanceStatus(fail_node, cluster)
+        status = self.checkInstanceNetworkStatus(fail_node, cluster)
         if status == False:
             logging.error("RecoverManager : check vm status false")
 
@@ -214,11 +213,10 @@ class RecoveryManager(object):
         print "start recover node by shutoff"
         result = fail_node.shutoff()
         if result.code == "succeed":
-            return True
+            return False  # shutoff need to remove from cluster, so return False
         else:
             logging.error(result.message)
             print result.message
-            return False
 
     def recoverNodeByStart(self, fail_node):
         print "start recover node by start"
@@ -295,7 +293,7 @@ class RecoveryManager(object):
             print str(e)
             return False
 
-    def checkInstanceStatus(self, fail_node, cluster, check_timeout=60):
+    def checkInstanceNetworkStatus(self, fail_node, cluster, check_timeout=60):
         status = False
         fail = False
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
@@ -308,7 +306,7 @@ class RecoveryManager(object):
                     ip = str(openstack_instance.networks['selfservice'][1])
                 status = self._pingInstance(ip, check_timeout)
             except Exception as e:
-                print "vm : %s has no floating network, abort ping process!"+str(e) % instance.name
+                print "vm : %s has no floating network, abort ping process!" + str(e) % instance.name
                 continue
             if not status:
                 fail = True

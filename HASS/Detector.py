@@ -9,13 +9,14 @@
 #:Description:
 #	This is a class which contains detect functions.
 ##########################################################
-import ConfigParser
-import logging
+
+
 import socket
 import subprocess
-import time
-
 import State
+import time
+import logging
+import ConfigParser
 from IPMIModule import IPMIManager
 
 
@@ -44,17 +45,21 @@ class Detector(object):
 
     def checkNetworkStatus(self):
         heartbeat_time = int(self.config.get("default", "heartbeat_time"))
+        fail = False
         while heartbeat_time > 0:
             try:
                 response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node],
                                                    stderr=subprocess.STDOUT, universal_newlines=True)
-                return State.HEALTH
+                fail = False
             except Exception as e:
                 logging.error("transient network fail")
+                fail = True
                 pass
             finally:
                 time.sleep(1)
                 heartbeat_time -= 1
+        if not fail:
+            return State.HEALTH
         return State.NETWORK_FAIL
 
     def checkServiceStatus(self):

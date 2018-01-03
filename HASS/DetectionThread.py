@@ -10,12 +10,13 @@
 #   This is a class which detects whether computing nodes happens error or not.
 ##########################################################
 
-import ConfigParser
 import threading
 import time
-import xmlrpclib
 import logging
+import ConfigParser
+import xmlrpclib
 import State
+
 from Detector import Detector
 
 
@@ -43,6 +44,7 @@ class DetectionThread(threading.Thread):
             print "[" + self.node.name + "] " + state
 
             if state != State.HEALTH:
+                logging.error("[" + self.node.name + "] " + state)
                 try:
                     recover_success = self.server.recover(state, self.cluster_id, self.node.name)
                     if recover_success:  # recover success
@@ -55,6 +57,7 @@ class DetectionThread(threading.Thread):
                 except Exception as e:
                     print "Exception : " + str(e)
                     self.stop()
+                self.server.updateDB()
             time.sleep(self.polling_interval)
 
     def stop(self):
@@ -62,8 +65,8 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         highest_level_check = self.function_map[-1]
-        # add detect sensor value
-
+        if self.detector.checkSensorStatus() != State.HEALTH:
+            return State.SENSOR_FAIL
         if highest_level_check() != State.HEALTH:
             state = self.verify(highest_level_check)
             if state == State.HEALTH:
@@ -101,4 +104,5 @@ if __name__ == "__main__":
                                                                                "rpc_password") + "@127.0.0.1:" + config.get(
         "rpc", "rpc_bind_port")
     server = xmlrpclib.ServerProxy(authUrl)
+
     server.test()
