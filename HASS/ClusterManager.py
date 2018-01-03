@@ -215,7 +215,7 @@ class ClusterManager():
                 message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
                 print str(e)
                 logging.error(message)
-                #result = {"code": "1", "clusterId": cluster_id, "message": message}
+                # result = {"code": "1", "clusterId": cluster_id, "message": message}
                 result = Response(code="failed",
                                   message=message,
                                   data={"cluster_id": cluster_id, "instance_id": instance_id})
@@ -240,18 +240,18 @@ class ClusterManager():
                 for instance in illegal_instance[:]:
                     cluster.sendUpdateInstance(instance[1])  # prev_host
             logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
-            #result = {"code": "0", "instanceList": instance_list}
+            # result = {"code": "0", "instanceList": instance_list}
             result = Response(code="succeed",
                               message=None,
                               data={"instance_list": instance_list})
             return result
         except Exception as e:
             print str(e)
-            #result = {"code": "1", "instanceList": []}
+            # result = {"code": "1", "instanceList": []}
             result = Response(code="failed",
                               message=str(e),
                               data={"instance_list": instance_list})
-            logging.error("ClusterManager--listInstance,getInstanceList fail"+str(e))
+            logging.error("ClusterManager--listInstance,getInstanceList fail" + str(e))
             return result
 
     @staticmethod
@@ -263,7 +263,7 @@ class ClusterManager():
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
                 logging.info(message)
-                #result = {"code": "0", "clusterId": cluster_id, "message": message}
+                # result = {"code": "0", "clusterId": cluster_id, "message": message}
                 result = Response(code="succeed",
                                   message=message,
                                   data={"cluster_id": cluster_id})
@@ -275,7 +275,7 @@ class ClusterManager():
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
                 logging.info(message)
-                #result = {"code": "0", "clusterId": cluster_id, "message": message}
+                # result = {"code": "0", "clusterId": cluster_id, "message": message}
                 result = Response(code="succeed",
                                   message=message,
                                   data={"cluster_id": cluster_id})
@@ -283,7 +283,7 @@ class ClusterManager():
         except:
             message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" % cluster_id
             logging.error(message)
-            #result = {"code": "1", "clusterId": cluster_id, "message": message}
+            # result = {"code": "1", "clusterId": cluster_id, "message": message}
             result = Response(code="failed",
                               message=message,
                               data={"cluster_id": cluster_id})
