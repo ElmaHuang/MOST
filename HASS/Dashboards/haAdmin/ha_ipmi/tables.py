@@ -43,7 +43,7 @@ class StartNodeAction(tables.BatchAction):
 
     def allowed(self, request, computing_node):
         # check cn's power status
-    	return (computing_node.state != "up")
+        return (computing_node.state != "up")
 
     def action(self, request, obj_id):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
@@ -53,8 +53,8 @@ class StartNodeAction(tables.BatchAction):
             err_msg = result.split(";")[1]
             messages.error(request, err_msg)
 
-class RebootNodeAction(tables.DeleteAction):
 
+class RebootNodeAction(tables.DeleteAction):
     @staticmethod
     def action_present(count):
         return ungettext_lazy(
@@ -70,7 +70,7 @@ class RebootNodeAction(tables.DeleteAction):
             u"Rebooted Nodes",
             count
         )
-    
+
     def action(self, request, obj_id):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
@@ -78,6 +78,7 @@ class RebootNodeAction(tables.DeleteAction):
         if result[0] == "1":
             err_msg = result.split(";")[1]
             messages.error(request, err_msg)
+
 
 class ShutOffNodeAction(tables.BatchAction):
     name = "shutoff"
@@ -115,7 +116,6 @@ class ShutOffNodeAction(tables.BatchAction):
 
 
 class Ipmi_CN_Table(tables.DataTable):
-    
     STATUS_CHOICES = (
         ("enabled", True),
         ("disabled", False),
@@ -132,10 +132,10 @@ class Ipmi_CN_Table(tables.DataTable):
         ("down", pgettext_lazy("Current state of a Hypervisor",
                                u"Down")),
     )
-    
+
     hostname = tables.WrappingColumn("hypervisor_hostname",
                                      link="horizon:haAdmin:ha_ipmi:detail",
-                                     verbose_name=_("Node name"))    
+                                     verbose_name=_("Node name"))
     status = tables.Column('status',
                            status=True,
                            status_choices=STATUS_CHOICES,
@@ -146,19 +146,19 @@ class Ipmi_CN_Table(tables.DataTable):
                           status_choices=STATUS_CHOICES,
                           display_choices=STATUS_DISPLAY_CHOICES,
                           verbose_name=_('Power State'))
-    
+
     def get_object_id(self, hypervisor):
         return "%s" % (hypervisor.hypervisor_hostname)
 
     class Meta:
         name = "ha_ipmi_overview"
         verbose_name = _("HA_IPMI")
-        #table_actions = (AddInstanceToProtectionAction,)
-	    row_actions = (StartNodeAction, ShutOffNodeAction, RebootNodeAction, GetNodeInfoAction)
-        #row_actions = (StartNodeAction, ShutOffNodeAction, RebootNodeAction)
+        # table_actions = (AddInstanceToProtectionAction,)
+        row_actions = (StartNodeAction, ShutOffNodeAction, RebootNodeAction, GetNodeInfoAction)
+        # row_actions = (StartNodeAction, ShutOffNodeAction, RebootNodeAction)
+
 
 class IPMINodeTemperatureTable(tables.DataTable):
-
     sensor = tables.Column("sensor_ID", verbose_name=_("Sensor ID"))
 
     device = tables.Column("device", verbose_name=_("Device"))
@@ -167,12 +167,14 @@ class IPMINodeTemperatureTable(tables.DataTable):
 
     lc = tables.Column("lower_critical", verbose_name=_("Lower Critical"))
 
-    uc = tables.Column("upper_critical", verbose_name=_("Upper Critical"))  
+    uc = tables.Column("upper_critical", verbose_name=_("Upper Critical"))
 
     class Meta:
         name = "IPMI_Temp"
         hidden_title = False
         verbose_name = _("Temperature")
+
+
 '''
 class IPMINodeVoltageTable(tables.DataTable):
 	

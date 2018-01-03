@@ -16,5 +16,5 @@ urlpatterns = patterns(
     url(r'^add_to_protection/$', AddView.as_view(), name='add_to_protection'),
     url(INSTANCES % 'update',
         UpdateView.as_view(),
-        name='update'), 
+        name='update'),
 )

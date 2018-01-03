@@ -35,10 +35,11 @@ from openstack_dashboard.dashboards.project.instances \
 
 LOG = logging.getLogger(__name__)
 
+
 class AddForm(forms.SelfHandlingForm):
     instance_id = forms.ChoiceField(label=_("Instance"))
     cluster_id = forms.ChoiceField(label=_("Cluster"))
-    
+
     def __init__(self, request, *args, **kwargs):
         super(AddForm, self).__init__(request, *args, **kwargs)
         authUrl = "http://user:0928759204@127.0.0.1:61209"
@@ -48,13 +49,13 @@ class AddForm(forms.SelfHandlingForm):
 
         clusters = server.listCluster()
         for cluster in clusters:
-            cluster_choices.append((cluster[0],cluster[1]))
+            cluster_choices.append((cluster[0], cluster[1]))
         self.fields['cluster_id'].choices = cluster_choices
 
         instances = []
         marker = self.request.GET.get(
             project_tables.InstancesTable._meta.pagination_param, None)
-        #search_opts = self.get_filters({'marker': marker, 'paginate': True})
+        # search_opts = self.get_filters({'marker': marker, 'paginate': True})
         # Gather our tenants to correlate against IDs
         try:
             tenants, has_more = api.keystone.tenant_list(self.request)
@@ -66,7 +67,7 @@ class AddForm(forms.SelfHandlingForm):
         try:
             instances, self._more = api.nova.server_list(
                 self.request,
-                #search_opts=search_opts,
+                # search_opts=search_opts,
                 all_tenants=True)
         except Exception:
             self._more = False
@@ -94,16 +95,17 @@ class AddForm(forms.SelfHandlingForm):
         messages.success(request, success_message)
         return True
 
+
 class UpdateForm(forms.SelfHandlingForm):
     name = forms.CharField(label=_("Name"), required=False,
-			   widget=forms.TextInput(
-			       attrs={'readonly': 'readonly'}))
+                           widget=forms.TextInput(
+                               attrs={'readonly': 'readonly'}))
     protection = forms.ChoiceField(choices=[(True, _('Protected')),
-					    (False, _('Non-Protected'))],
-			           label=_("Protection"))
+                                            (False, _('Non-Protected'))],
+                                   label=_("Protection"))
     instance_id = forms.CharField(widget=forms.TextInput(
-				      attrs={'readonly': 'readonly'}))
-	
+        attrs={'readonly': 'readonly'}))
+
     redirect_url = reverse_lazy('horizon:haAdmin:ha_instances:index')
 
     def __init__(self, request, *args, **kwargs):
@@ -127,12 +129,12 @@ class UpdateForm(forms.SelfHandlingForm):
             except Exception:
                 redirect = reverse("horizon:haAdmin:ha_instances:index")
                 msg = _('Unable to retrieve instance details.')
-                exceptions.handle(self.request, msg, redirect=redirect) 
+                exceptions.handle(self.request, msg, redirect=redirect)
                 return False
             success_message = _('Deleted Instance:%s from HA Cluster.' % instance.name)
             messages.success(request, success_message)
         return True
-    
+
     def get_cluster_by_instance(self, server, instance_id):
         clusters = server.listCluster()
         cluster_uuid = ""
@@ -140,14 +142,14 @@ class UpdateForm(forms.SelfHandlingForm):
             uuid = cluster[0]
             name = cluster[1]
             _ha_instances = server.listInstance(uuid)
-            #result,ha_instances = _ha_instances.split(";")
+            # result,ha_instances = _ha_instances.split(";")
             result = _ha_instances["code"]
             ha_instance = _ha_instances["instanceList"]
             ha_instances = []
             if result == '0':
                 for _instance in ha_instance:
                     ha_instances.append(_instance[0])
-                #ha_instances = ha_instances.split(",")
+                # ha_instances = ha_instances.split(",")
                 for _inst_id in ha_instances:
                     if instance_id in _inst_id:
                         cluster_uuid = uuid

@@ -250,7 +250,7 @@ class ClusterManager():
             # result = {"code": "1", "instanceList": []}
             result = Response(code="failed",
                               message=str(e),
-                              data={"instance_list": instance_list})
+                              data={"instance_list": []})
             logging.error("ClusterManager--listInstance,getInstanceList fail" + str(e))
             return result
 

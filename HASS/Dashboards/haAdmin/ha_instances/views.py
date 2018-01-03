@@ -11,14 +11,14 @@ from horizon import forms
 from openstack_dashboard import api
 
 from openstack_dashboard.dashboards.haAdmin.ha_instances import tables as project_tables
-from openstack_dashboard.dashboards.haAdmin.ha_instances\
-    import forms as project_forms
+from openstack_dashboard.dashboards.haAdmin.ha_instances import forms as project_forms
 
 import xmlrpclib
 
+
 class AddView(forms.ModalFormView):
     form_class = project_forms.AddForm
-    template_name = 'haAdmin/ha_instances/create.html'    
+    template_name = 'haAdmin/ha_instances/create.html'
     success_url = reverse_lazy('horizon:haAdmin:ha_instances:index')
     submit_label = _("Add")
     submit_url = "horizon:haAdmin:ha_instances:add_to_protection"
@@ -34,14 +34,14 @@ class UpdateView(forms.ModalFormView):
     page_title = _("Update Instance")
     submit_label = _("Save Changes")
     submit_url = "horizon:haAdmin:ha_instances:update"
-    
+
     def get_context_data(self, **kwargs):
         context = super(UpdateView, self).get_context_data(**kwargs)
         args = (self.kwargs['instance_id'],)
         context["instance_id"] = self.kwargs['instance_id']
         context['submit_url'] = reverse(self.submit_url, args=args)
         return context
-    
+
     def _get_object(self, *args, **kwargs):
         instance_id = self.kwargs['instance_id']
         try:
@@ -50,7 +50,7 @@ class UpdateView(forms.ModalFormView):
             redirect = reverse("horizon:haAdmin:ha_instances:index")
             msg = _('Unable to retrieve instance details.')
             exceptions.handle(self.request, msg, redirect=redirect)
-    
+
     def get_initial(self):
         initial = super(UpdateView, self).get_initial()
         initial.update({'instance_id': self.kwargs['instance_id'],
@@ -63,8 +63,8 @@ class IndexView(tables.DataTableView):
     template_name = 'haAdmin/ha_instances/index.html'
     page_title = _("HA_Instances")
 
-    #def has_more_data(self, table):
-        #return self._more
+    # def has_more_data(self, table):
+    # return self._more
 
     def get_data(self):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
@@ -75,12 +75,12 @@ class IndexView(tables.DataTableView):
             uuid = clusrer[0]
             name = clusrer[1]
             _cluster_instances = server.listInstance(uuid)
-            #result,cluster_instances = _cluster_instances.split(";")
+            # result,cluster_instances = _cluster_instances.split(";")
             result = _cluster_instances["code"]
             cluster_instances = _cluster_instances["instanceList"]
             if result == '0':
                 if cluster_instances != "":
-                    #cluster_instances = cluster_instances.split(",")
+                    # cluster_instances = cluster_instances.split(",")
                     for _instance in cluster_instances:
                         instance_id = _instance[0]
                         try:
@@ -122,7 +122,7 @@ class IndexView(tables.DataTableView):
         """
         if instances:
             try:
-                api.network.servers_update_addresses(self.request, instances,all_tenants=True)
+                api.network.servers_update_addresses(self.request, instances, all_tenants=True)
             except Exception:
                 exceptions.handle(
                     self.request,
@@ -138,7 +138,7 @@ class IndexView(tables.DataTableView):
 
             full_flavors = SortedDict([(f.id, f) for f in flavors])
             tenant_dict = SortedDict([(t.id, t) for t in tenants])
-            count = 1 # to count instances number
+            count = 1  # to count instances number
             # Loop through instances to get flavor and tenant info.
             for inst in instances:
                 flavor_id = inst.flavor["id"]
@@ -157,7 +157,7 @@ class IndexView(tables.DataTableView):
                 inst.tenant_name = getattr(tenant, "name", None)
 
                 cluster_id = inst.cluster_id
-                #result, node_list = server.listNode(cluster_id).split(";")
+                # result, node_list = server.listNode(cluster_id).split(";")
                 cluster_node = server.listNode(cluster_id)
                 result = cluster_node["code"]
                 node_list = cluster_node["nodeList"]
@@ -168,7 +168,7 @@ class IndexView(tables.DataTableView):
                     inst.protection = "Incomplete Protected"
                 else:
                     inst.protection = "Protected"
-                count = count +1
+                count = count + 1
         return instances
 
     def get_filters(self, filters):
@@ -180,4 +180,3 @@ class IndexView(tables.DataTableView):
                 if filter_field and filter_string:
                     filters[filter_field] = filter_string
         return filters
-

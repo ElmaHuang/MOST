@@ -18,11 +18,11 @@ from horizon import workflows
 from horizon import messages
 from django.core import urlresolvers
 
-
 from openstack_dashboard import api
 
 import xmlrpclib
 import re
+
 
 class SetHAClusterInfoAction(workflows.Action):
     name = forms.CharField(label=_("Name"),
@@ -70,11 +70,12 @@ class AddHostsToHAClusterAction(workflows.MembershipAction):
                 host_names.append(host.host_name)
         host_names.sort()
 
-        self.fields[field_name].choices =[(host_name, host_name) for host_name in host_names]
+        self.fields[field_name].choices = [(host_name, host_name) for host_name in host_names]
 
     class Meta(object):
         name = _("Computing Nodes")
         slug = "add_host_to_ha_cluster"
+
 
 class AddNodesToHAClusterAction(workflows.MembershipAction):
     def __init__(self, request, *args, **kwargs):
@@ -108,6 +109,7 @@ class AddNodesToHAClusterAction(workflows.MembershipAction):
         name = _("Computing Nodes")
         slug = "add_node_to_ha_cluster"
 
+
 class AddHostsToHAClusterStep(workflows.UpdateMembersStep):
     action_class = AddHostsToHAClusterAction
     help_text = _("Select the computing nodes which are unused. If no computing nodes are "
@@ -124,7 +126,8 @@ class AddHostsToHAClusterStep(workflows.UpdateMembersStep):
             member_field_name = self.get_member_field_name('member')
             context['computing_nodes'] = data.get(member_field_name, [])
         return context
-   
+
+
 class AddComputingNodesToHAClusterStep(workflows.UpdateMembersStep):
     action_class = AddHostsToHAClusterAction
     help_text = _("Select the computing nodes which are unused.")
@@ -140,6 +143,7 @@ class AddComputingNodesToHAClusterStep(workflows.UpdateMembersStep):
             member_field_name = self.get_member_field_name('member')
             context['computing_nodes'] = data.get(member_field_name, [])
         return context
+
 
 class CreateHAClusterWorkflow(workflows.Workflow):
     slug = "create_ha_cluster"
@@ -163,8 +167,9 @@ class CreateHAClusterWorkflow(workflows.Workflow):
         if 'overlapping node' in result["message"]:
             self.failure_message = result["message"]
             return False
-        self.success_message = _('Created new HA cluster "%s".'  % name)
+        self.success_message = _('Created new HA cluster "%s".' % name)
         return True
+
 
 class AddComputingNodeWorkflow(workflows.Workflow):
     slug = "add_computing_node"
@@ -183,15 +188,15 @@ class AddComputingNodeWorkflow(workflows.Workflow):
         for node in context_computing_nodes:
             node_list.append(node)
         cluster_id = self.get_cluster_id(self.get_absolute_url())
-        result = server.addNode(cluster_id,node_list).split(";")
+        result = server.addNode(cluster_id, node_list).split(";")
         self.success_url = urlresolvers.reverse(self.success_url, args=[cluster_id])
 
-        if result["code"] == '1': # error
+        if result["code"] == '1':  # error
             self.failure_message = result["message"]
             return False
         self.success_message = _('Add new Computing Node %s to HA Cluster.' % (",".join(node_list)))
-        messages.success(request, self.success_message )
+        messages.success(request, self.success_message)
         return True
 
-    def get_cluster_id(self,full_url): # get cluster's id by url
+    def get_cluster_id(self, full_url):  # get cluster's id by url
         return full_url.split("/")[4]

@@ -16,6 +16,7 @@ from openstack_dashboard.dashboards.haAdmin.ha_ipmi import tables as project_tab
 
 import xmlrpclib
 
+
 class Temperature:
     def __init__(self, id, sensor_ID, device, value, lower_critical, upper_critical):
         self.id = id
@@ -25,12 +26,14 @@ class Temperature:
         self.lower_critical = lower_critical
         self.upper_critical = upper_critical
 
+
 class Voltage:
     def __init__(self, id, sensor_ID, device, value):
         self.id = id
         self.sensor_ID = sensor_ID
         self.device = device
         self.value = value
+
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.Ipmi_CN_Table
@@ -46,11 +49,12 @@ class IndexView(tables.DataTableView):
             exceptions.handle(self.request, _('Unable to retrieve hypervisor information.'))
         return hypervisors
 
+
 class DetailView(tables.MultiTableView):
     table_classes = (project_tables.IPMINodeTemperatureTable, project_tables.IPMINodeVoltageTable)
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
-    
+
     volt_list = []
 
     def get_IPMI_Temp_data(self):
@@ -76,4 +80,3 @@ class DetailView(tables.MultiTableView):
             volt_data.append(Voltage(volt_id, volt[0], volt[1], volt[2]))
             volt_id = volt_id + 1
         return volt_data
-

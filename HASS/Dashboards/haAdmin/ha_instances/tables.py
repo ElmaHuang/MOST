@@ -6,11 +6,9 @@ from django.template.defaultfilters import title  # noqa
 
 from horizon.utils import filters
 
-
 from horizon import tables
 
 from openstack_dashboard import api
-
 
 POWER_STATES = {
     0: "NO STATE",
@@ -24,6 +22,7 @@ POWER_STATES = {
     8: "FAILED",
     9: "BUILDING",
 }
+
 
 class AddInstanceToProtectionAction(tables.LinkAction):
     name = "add_to_protection"
@@ -39,7 +38,7 @@ class EditInstanceProtectionAction(tables.LinkAction):
     url = "horizon:haAdmin:ha_instances:update"
     classes = ("ajax-modal",)
     icon = "pencil"
-     
+
 
 def get_ips(instance):
     template_name = 'haAdmin/ha_instances/_instance_ips.html'
@@ -57,21 +56,24 @@ def get_ips(instance):
     context = {"ip_groups": ip_groups, }
     return template.loader.render_to_string(template_name, context)
 
+
 def get_power_state(instance):
     return POWER_STATES.get(getattr(instance, "OS-EXT-STS:power_state", 0), '')
 
+
 POWER_DISPLAY_CHOICES = (
-        ("NO STATE", pgettext_lazy("Power state of an Instance", u"No State")),
-        ("RUNNING", pgettext_lazy("Power state of an Instance", u"Running")),
-        ("BLOCKED", pgettext_lazy("Power state of an Instance", u"Blocked")),
-        ("PAUSED", pgettext_lazy("Power state of an Instance", u"Paused")),
-        ("SHUTDOWN", pgettext_lazy("Power state of an Instance", u"Shut Down")),
-        ("SHUTOFF", pgettext_lazy("Power state of an Instance", u"Shut Off")),
-        ("CRASHED", pgettext_lazy("Power state of an Instance", u"Crashed")),
-        ("SUSPENDED", pgettext_lazy("Power state of an Instance", u"Suspended")),
-        ("FAILED", pgettext_lazy("Power state of an Instance", u"Failed")),
-        ("BUILDING", pgettext_lazy("Power state of an Instance", u"Building")),
+    ("NO STATE", pgettext_lazy("Power state of an Instance", u"No State")),
+    ("RUNNING", pgettext_lazy("Power state of an Instance", u"Running")),
+    ("BLOCKED", pgettext_lazy("Power state of an Instance", u"Blocked")),
+    ("PAUSED", pgettext_lazy("Power state of an Instance", u"Paused")),
+    ("SHUTDOWN", pgettext_lazy("Power state of an Instance", u"Shut Down")),
+    ("SHUTOFF", pgettext_lazy("Power state of an Instance", u"Shut Off")),
+    ("CRASHED", pgettext_lazy("Power state of an Instance", u"Crashed")),
+    ("SUSPENDED", pgettext_lazy("Power state of an Instance", u"Suspended")),
+    ("FAILED", pgettext_lazy("Power state of an Instance", u"Failed")),
+    ("BUILDING", pgettext_lazy("Power state of an Instance", u"Building")),
 )
+
 
 class InstancesTable(tables.DataTable):
     number = tables.Column("number", verbose_name=_("#"))
@@ -87,10 +89,10 @@ class InstancesTable(tables.DataTable):
     cluster_id = tables.Column("cluster_id", hidden=True, verbose_name=_("Cluster ID"))
 
     cluster_name = tables.Column("cluster_name",
-				 verbose_name=_("Cluster"))
+                                 verbose_name=_("Cluster"))
 
     protection = tables.Column("protection",
-				verbose_name=_("Protection"))
+                               verbose_name=_("Protection"))
 
     ip = tables.Column(get_ips,
                        verbose_name=_("IP Address"),
@@ -102,10 +104,10 @@ class InstancesTable(tables.DataTable):
                           display_choices=POWER_DISPLAY_CHOICES)
 
     created = tables.Column("created",
-			    verbose_name=_("Time since created"),
-			    filters=(filters.parse_isotime,
-				     filters.timesince_sortable),
-			    attrs={'data-type': 'timesince'})
+                            verbose_name=_("Time since created"),
+                            filters=(filters.parse_isotime,
+                                     filters.timesince_sortable),
+                            attrs={'data-type': 'timesince'})
     """
     name = tables.Column('name', \
                          verbose_name=_("Name"))
@@ -116,6 +118,7 @@ class InstancesTable(tables.DataTable):
     image_name = tables.Column('image_name', \
                                verbose_name=_("Image Name"))
     """
+
     class Meta:
         name = "ha_instances"
         verbose_name = _("HA_Instances")
