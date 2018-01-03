@@ -14,7 +14,7 @@ import ConfigParser
 import threading
 import time
 import xmlrpclib
-
+import logging
 import State
 from Detector import Detector
 
@@ -38,9 +38,6 @@ class DetectionThread(threading.Thread):
         self.server = xmlrpclib.ServerProxy(self.authUrl)
 
     def run(self):
-        data = ""
-        failure_occured_time = 0
-        failure_detection_time = 0
         while not self.loop_exit:
             state = self.detect()
             print "[" + self.node.name + "] " + state

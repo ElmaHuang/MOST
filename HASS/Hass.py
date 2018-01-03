@@ -25,6 +25,7 @@ import sys
 from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
+from Response import Response
 
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
@@ -87,7 +88,6 @@ class Hass(object):
     def __init__(self):
         ClusterManager.init()
         self.Operator = Operator()
-
         self.RecoveryManager = RecoveryManager()
 
     def test_auth_response(self):
@@ -110,26 +110,30 @@ class Hass(object):
                 """
         try:
             createCluster_result = ClusterManager.createCluster(name)
-            if createCluster_result["code"] == "0":
+            if createCluster_result.code == "succeed":
                 if nodeList != []:
-                    addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
+                    addNode_result = ClusterManager.addNode(createCluster_result.data.get("cluster_id"), nodeList)
 
-                    if addNode_result["code"] == "0":
+                    if addNode_result.code == "succeed":
                         message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (
-                            createCluster_result["clusterId"], addNode_result["message"])
+                            createCluster_result.data.get("cluster_id"), addNode_result.message)
                         logging.info(message)
-                        result = {"code": "0", "message": message}
+                        # result = {"code": "0", "message": message}
+                        result = Response(code="succeed",
+                                          message=message)
                         return result
                     else:
                         # add node fail
-                        message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + \
-                                  addNode_result["message"]
+                        message = "The cluster is created.(uuid = " + createCluster_result.data.get(
+                            "cluster_id") + ") But," + addNode_result.message
                         logging.error(message)
-                        result = {"code": "0", "message": message}
+                        # result = {"code": "0", "message": message}
+                        result = Response(code="succeed",
+                                          message=message)
                         return result
                 else:  # nodelist is None
                     # addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
-                    logging.info(createCluster_result["message"])
+                    logging.info(createCluster_result.message)
                     return createCluster_result
             else:
                 # create cluster
@@ -383,6 +387,21 @@ class Hass(object):
         except Exception as e:
             print str(e)
             logging.error("HASS--recover node %s fail" % node_name)
+
+    def updateDB(self):
+        """
+        The function for updating the data structures in the system.
+        Args:
+        Return:
+            (bool) recover success or not.
+            True -> success.
+            False -> fail.
+        """
+        try:
+            result = ClusterManager.syncToDatabase()
+            return result
+        except Exception as e:
+            logging.error("HASS--update database fail : %s" % str(e))
 
 
 def main():
