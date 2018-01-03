@@ -1,17 +1,14 @@
 from NovaClient import NovaClient
-import logging
-import socket
 
 
 class Instance(object):
-    def __init__(self, id, name, host):
+    def __init__(self, id, name, host, status, network):
         self.id = id
         self.name = name
         self.host = host
-        self.network = None
-        self.status = None
+        self.network = network
+        self.status = status
         self.nova_client = NovaClient.getInstance()
-        self.updateInfo()
 
     # self.sendIP()
 
