@@ -24,8 +24,8 @@ class Cluster(ClusterInterface):
     def addNode(self, node_name_list):
         # create node list
         message = ""
-        if node_name_list == []: raise Exception
         try:
+            if node_name_list == []: raise Exception
             for node_name in node_name_list:
                 if self._isInComputePool(node_name):
                     # print node_name_list
@@ -151,8 +151,7 @@ class Cluster(ClusterInterface):
                                   message=message,
                                   data={"cluster_id": self.id, "instance_id": instance_id})
         except Exception as e:
-            print str(e)
-            message = "Cluster--delete instance fail . The instance id is %s." % instance_id
+            message = "Cluster--delete instance fail . The instance id is %s." + str(e) % instance_id
             logging.error(message)
             # result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
             result = Response(code="failed",
@@ -173,7 +172,7 @@ class Cluster(ClusterInterface):
         try:
             for instance in self.instance_list[:]:
                 prev_host = instance.host
-                check_instance_result = self._checkInstacne(instance)
+                check_instance_result = self._checkInstance(instance)
                 if check_instance_result == False:
                     illegal_instance.append((instance.id, prev_host))
                 else:
@@ -184,7 +183,7 @@ class Cluster(ClusterInterface):
         finally:
             return legal_instance, illegal_instance
 
-    def _checkInstacne(self, instance):
+    def _checkInstance(self, instance):
         try:
             instance_info = instance.getInfo()
             host = instance_info[2]
@@ -291,7 +290,6 @@ class Cluster(ClusterInterface):
 
     def checkInstanceHost(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)
-        # if host == None:print "get vm host fail"
         for node in self.node_list[:]:
             if host == node.name:
                 return host
@@ -299,7 +297,6 @@ class Cluster(ClusterInterface):
 
     def liveMigrateInstance(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)
-        # if host == None: print "get vm host fail"
         target_host = self.findTargetHost(host)
         print "start live migrate vm from ", host, "to ", target_host.name
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)

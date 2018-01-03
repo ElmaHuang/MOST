@@ -17,6 +17,7 @@ import subprocess
 import time
 
 import State
+from Response import Response
 from ClusterManager import ClusterManager
 from DatabaseManager import IIIDatabaseManager
 from Detector import Detector
@@ -173,12 +174,13 @@ class RecoveryManager(object):
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
         print "check instance status"
-
         status = self.checkInstanceStatus(fail_node, cluster)
         if status == False:
             logging.error("RecoverManager : check vm status false")
+
         print "update instance"
         cluster.updateInstance()
+
         if self.iii_support:
             self.iii_database = IIIDatabaseManager()
             print "start modify iii database"
@@ -193,10 +195,10 @@ class RecoveryManager(object):
     def recoverNodeByReboot(self, fail_node):
         print "start recover node by reboot"
         result = fail_node.reboot()
-        print "boot node result : %s" % result
+        print "boot node result : %s" % result.message
         message = "RecoveryManager recover network isolation"
-        if result["code"] == "0":
-            logging.info(message + result["message"])
+        if result.code == "succeed":
+            logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
             if boot_up:
                 print "Node %s recovery finished." % fail_node.name
@@ -205,26 +207,26 @@ class RecoveryManager(object):
                 logging.error(message + "Can not reboot node %s successfully", fail_node.name)
                 return False
         else:
-            logging.error(message + result["message"])
+            logging.error(message + result.message)
             return False
 
     def recoverNodeByShutoff(self, fail_node):
         print "start recover node by shutoff"
         result = fail_node.shutoff()
-        if result["code"] == "0":
+        if result.code == "succeed":
             return True
         else:
-            logging.error(result["message"])
-            print result["message"]
+            logging.error(result.message)
+            print result.message
             return False
 
     def recoverNodeByStart(self, fail_node):
-        print "start recover node by reboot"
+        print "start recover node by start"
         result = fail_node.start()
-        print "boot node result : %s" % result
+        print "boot node result : %s" % result.message
         message = "RecoveryManager recover network isolation"
-        if result["code"] == "0":
-            logging.info(message + result["message"])
+        if result.code == "succeed":
+            logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
             if boot_up:
                 print "Node %s recovery finished." % fail_node.name
@@ -233,7 +235,7 @@ class RecoveryManager(object):
                 logging.error(message + "Can not start node %s successfully", fail_node.name)
                 return False
         else:
-            logging.error(message + result["message"])
+            logging.error(message + result.message)
             return False
 
     def restartDetectionService(self, fail_node, version):
@@ -300,10 +302,13 @@ class RecoveryManager(object):
         for instance in protected_instance_list:
             openstack_instance = self.nova_client.getVM(instance.id)
             try:
-                ip = str(openstack_instance.networks['selfservice'][1])
+                if "provider" in openstack_instance.networks:
+                    ip = str(openstack_instance.networks['provider'][0])
+                else:
+                    ip = str(openstack_instance.networks['selfservice'][1])
                 status = self._pingInstance(ip, check_timeout)
             except Exception as e:
-                print "vm : %s has no floating network, abort ping process!" % instance.name
+                print "vm : %s has no floating network, abort ping process!"+str(e) % instance.name
                 continue
             if not status:
                 fail = True

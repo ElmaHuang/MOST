@@ -182,11 +182,11 @@ class IPMIManager(object):
                 result_list.append(sensor_data)
                 code = "0"
                 message = message + "Successfully get computing node : %s's %s information." % (
-                node_name, sensor_type_list)
+                    node_name, sensor_type_list)
                 logging.info("IpmiModule getNodeInfo - " + message)
             except Exception as e:
                 message = message + "Error! Unable to get computing node : %s's %s information." % (
-                node_name, sensor_type_list)
+                    node_name, sensor_type_list)
                 logging.error("IpmiModule getNodeInfo - %s" % e)
                 code = "1"
         print result_list
@@ -285,7 +285,7 @@ class IPMIManager(object):
         except Exception as e:
             logging.error(
                 "IpmiModule getPowerStatus - The Compute Node %s's IPMI session can not be established. %s" % (
-                node_name, e))
+                    node_name, e))
             status = "IPMI_disable"
         finally:
             return status
