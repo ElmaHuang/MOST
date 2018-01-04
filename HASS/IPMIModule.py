@@ -13,12 +13,14 @@
 ##########################################################
 
 import ConfigParser
+import json
 import logging
 import re
 import subprocess
 import time
 
 import IPMIConf
+from Response import Response
 
 
 class IPMIManager(object):
@@ -27,8 +29,8 @@ class IPMIManager(object):
         self.config.read('hass.conf')
         self.ip_dict = dict(self.config._sections['ipmi'])
         self.user_dict = dict(self.config._sections['ipmi_user'])
-        self.TEMP_LOWER_CRITICAL = 10
-        self.TEMP_UPPER_CRITICAL = 80
+        # self.TEMP_LOWER_CRITICAL = 10
+        # self.TEMP_UPPER_CRITICAL = 80
 
     def rebootNode(self, node_name):
         code = ""
@@ -42,13 +44,18 @@ class IPMIManager(object):
             if IPMIConf.REBOOTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is rebooted." % node_name
                 logging.info("IpmiModule rebootNode - The Computing Node %s is rebooted." % node_name)
-                code = "0"
+                # code = "0"
+                code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be rebooted." % node_name
             logging.error("IpmiModule rebootNode - %s" % e)
-            code = "1"
+            # code = "1"
+            code = "failed"
         finally:
-            result = {"code": code, "node": node_name, "message": message}
+            # result = {"code": code, "node": node_name, "message": message}
+            result = Response(code=code,
+                              message=message,
+                              data={"node": node_name})
             return result
 
     def startNode(self, node_name):
@@ -63,13 +70,18 @@ class IPMIManager(object):
             if IPMIConf.STARTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is started." % node_name
                 logging.info("IpmiModule startNode - The Computing Node %s is started." % node_name)
-                code = "0"
+                # code = "0"
+                code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be started." % node_name
             logging.error("IpmiModule startNode - %s" % e)
-            code = "1"
+            # code = "1"
+            code = "failed"
         finally:
-            result = {"code": code, "node": node_name, "message": message}
+            # result = {"code": code, "node": node_name, "message": message}
+            result = Response(code=code,
+                              message=message,
+                              data={"node": node_name})
             return result
 
     def shutOffNode(self, node_name):
@@ -84,29 +96,31 @@ class IPMIManager(object):
             if IPMIConf.SHUTOFFNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is shut down." % node_name
                 logging.info("IpmiModule shutOffNode - The Computing Node %s is shut down." % node_name)
-                code = "0"
+                # code = "0"
+                code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be shut down." % node_name
             logging.error("IpmiModule shutOffNode - %s" % e)
-            code = "1"
+            # code = "1"
+            code = "failed"
         finally:
-            result = {"code": code, "node": node_name, "message": message}
+            # result = {"code": code, "node": node_name, "message": message}
+            result = Response(code=code,
+                              message=message,
+                              data={"node": node_name})
             return result
 
-    def getTempInfoByNode(self, node_name):
-        code = ""
-        message = ""
-        dataList = []
-        vendor = self.config.get("ipmi", "vendor")
+    def getTempInfoByNode(self, node_name, sensor_type):
+        # vendor = self.config.get("ipmi", "vendor")
         base = self._baseCMDGenerate(node_name)
         if base is None:
             raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
-            command = base
-            if vendor == "HP":
-                command += IPMIConf.HP_NODE_CPU_SENSOR_INFO
-            elif vendor == "DELL":
-                command += IPMIConf.DELL_NODE_CPU_SENSOR_INFO
+            command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
+            # if vendor == "HP":
+            #     command += IPMIConf.HP_NODE_CPU_SENSOR_INFO
+            # elif vendor == "DELL":
+            #     command += IPMIConf.DELL_NODE_CPU_SENSOR_INFO
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             response, err = p.communicate()
             response = response.split("\n")
@@ -115,6 +129,7 @@ class IPMIManager(object):
         except Exception as e:
             message = "Error! Unable to get computing node : %s's hardware information." % node_name
             logging.error("IpmiModule getNodeInfo - %s, %s" % (message, e))
+            return "Error"
 
     def dataClean(self, raw_data, type=None):
         if type == "temperature":
@@ -199,8 +214,8 @@ class IPMIManager(object):
             result = self.getNodeInfoByType(node_name, AllTemp)
             logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
             return result
-        except:
-            logging.error("IPMIModule--getAllInfoNode fail")
+        except Exception as e:
+            logging.error("IPMIModule--getAllInfoNode fail"+str(e))
 
     def getOSStatus(self, node_name):
         status = "OK"
@@ -244,15 +259,19 @@ class IPMIManager(object):
                 return int(re.findall("[0-9]+", info)[0])  # find value
 
     def getSensorStatus(self, node_name):
-        temperature = self.getTempInfoByNode(node_name)
-        return self._checkTempValue(temperature)
-
-    def _checkTempValue(self, temperature):
-        if temperature > self.TEMP_UPPER_CRITICAL:
-            return False
-        if temperature < self.TEMP_LOWER_CRITICAL:
-            return False
-        return "OK"
+        ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor", "ipmi_watched_sensors"))
+        upper_critical = int(self.config.get("ipmi_sensor", "upper_critical"))
+        lower_critical = int(self.config.get("ipmi_sensor", "lower_critical"))
+        try:
+            for sensor in ipmi_watched_sensor_list:
+                value = self.getTempInfoByNode(node_name, sensor)
+                if value == "Error" and self.getPowerStatus(node_name) != "OK":
+                    return "OK"
+                if value > upper_critical or value < lower_critical:
+                    return "Error"
+            return "OK"
+        except Exception as e:
+            logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
 
     def resetWatchDog(self, node_name):
         status = True

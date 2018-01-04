@@ -25,8 +25,8 @@ SHUTOFFNODE_SUCCESS_MSG = "Down/Off"
 
 NODEINFO = "sdr elist full -v -c sensor reading"
 NODEINFO_BY_TYPE = "sensor get '%s'"
-HP_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "02-CPU 1"
-DELL_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "Temp"
+# HP_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "02-CPU 1"
+# DELL_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "Temp"
 
 GET_OS_STATUS = "mc watchdog get"
 OS_TYPE_INITIAL = "Initial Countdown"
