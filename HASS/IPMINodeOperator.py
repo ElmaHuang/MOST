@@ -14,8 +14,9 @@
 
 from NovaClient import NovaClient
 from IPMIModule import IPMIManager
-import time
 from ClusterManager import ClusterManager
+from Response import Response
+import time
 import ConfigParser
 import logging
 import socket
@@ -40,7 +41,7 @@ class Operator(object):
             message += " IPMIOperator--node is in compute pool . The node is %s." % node_name
             try:
                 ipmi_result = self.ipmi_module.startNode(node_name)
-                if ipmi_result["code"] == "0":
+                if ipmi_result.code == "succeed":
                     boot_up = self._checkNodeBootSuccess(node_name, default_wait_time)
                     if boot_up:
                         message += "start node success.The node is %s." % node_name
@@ -48,7 +49,8 @@ class Operator(object):
                         detection = self._checkDetectionAgent(node_name, default_wait_time)
                         if not detection:
                             message += "detectionagent in computing node is fail."
-                        result = {"code": "0", "node_name": node_name, "message": message}
+                        # result = {"code": "0", "node_name": node_name, "message": message}
+                        result = Response(code="succeed", message=message, data={"node_name": node_name})
                     else:
                         raise Exception("check node boot fail")
                 else:
@@ -57,12 +59,15 @@ class Operator(object):
                 # start fail
                 message += "IPMIOperator--start node fail.The node is %s.%s" % (node_name, e)
                 logging.error(message)
-                result = {"code": "1", "node_name": node_name, "message": message}
+                # result = {"code": "1", "node_name": node_name, "message": message}
+                result = Response(code="failed", message=message, data={"node_name": node_name})
+
         else:
             # code = "1"
             message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % node_name
             logging.error(message)
-            result = {"code": "1", "node_name": node_name, "message": message}
+            # result = {"code": "1", "node_name": node_name, "message": message}
+            result = Response(code="failed", message=message, data={"node_name": node_name})
         return result
 
     def shutOffNode(self, node_name):
@@ -72,21 +77,24 @@ class Operator(object):
             try:
                 ipmi_result = self.ipmi_module.shutOffNode(node_name)
                 # check power status in IPMIModule
-                if ipmi_result["code"] == "0":
+                if ipmi_result.code == "succeed":
                     message += "shut off node success.The node is %s." % node_name
                     logging.info(message)
-                    result = {"code": "0", "node_name": node_name, "message": message}
+                    # result = {"code": "0", "node_name": node_name, "message": message}
+                    result = Response(code="succeed", message=message, data={"node_name": node_name})
                 else:
                     raise Exception("IpmiModule shut off node fail")
             except Exception as e:
                 # shut off fail
                 message += "IPMIOperator--shut off node fail.The node is %s.%s" % (node_name, e)
                 logging.error(message)
-                result = {"code": "1", "node_name": node_name, "message": message}
+                # result = {"code": "1", "node_name": node_name, "message": message}
+                result = Response(code="failed", message=message, data={"node_name": node_name})
         else:
             message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
             logging.error(message)
-            result = {"code": "1", "node_name": node_name, "message": message}
+            # result = {"code": "1", "node_name": node_name, "message": message}
+            result = Response(code="failed", message=message, data={"node_name": node_name})
         return result
 
     def rebootNode(self, node_name, default_wait_time=180):
@@ -100,18 +108,21 @@ class Operator(object):
                     detection = self._checkDetectionAgent(node_name, default_wait_time)
                     if not detection:
                         message += "detectionagent in computing node is fail."
-                    result = {"code": "0", "node_name": node_name, "message": message}
+                    # result = {"code": "0", "node_name": node_name, "message": message}
+                    result = Response(code="succeed", message=message, data={"node_name": node_name})
                 else:
                     raise Exception("IpmiModule reboot node fail")
             except Exception as e:
                 # shut off fail
                 message += "IPMIOperator--reboot node fail.The node is %s.%s" % (node_name, e)
                 logging.error(message)
-                result = {"code": "1", "node_name": node_name, "message": message}
+                # result = {"code": "1", "node_name": node_name, "message": message}
+                result = Response(code="failed", message=message, data={"node_name": node_name})
         else:
             message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
             logging.error(message)
-            result = {"code": "1", "node_name": node_name, "message": message}
+            # result = {"code": "1", "node_name": node_name, "message": message}
+            result = Response(code="failed", message=message, data={"node_name": node_name})
         return result
 
     def getAllInfoByNode(self, node_name):
