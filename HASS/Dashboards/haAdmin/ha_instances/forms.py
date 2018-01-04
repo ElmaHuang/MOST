@@ -17,19 +17,15 @@
 Views for managing Neutron Routers.
 """
 import logging
+import xmlrpclib
 
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
-
 from horizon import exceptions
 from horizon import forms
 from horizon import messages
-
-import xmlrpclib
-
 from openstack_dashboard import api
-
 from openstack_dashboard.dashboards.project.instances \
     import tables as project_tables
 

@@ -1,14 +1,9 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-
 from django import template
 from django.template.defaultfilters import title  # noqa
-
-from horizon.utils import filters
-
+from django.utils.translation import pgettext_lazy
+from django.utils.translation import ugettext_lazy as _
 from horizon import tables
-
-from openstack_dashboard import api
+from horizon.utils import filters
 
 POWER_STATES = {
     0: "NO STATE",

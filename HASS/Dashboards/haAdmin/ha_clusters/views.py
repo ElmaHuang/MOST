@@ -1,22 +1,11 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.datastructures import SortedDict
-from django.core.urlresolvers import reverse_lazy
-
-from horizon import tabs
-from horizon import exceptions
-from horizon import tables
-from horizon import workflows
-
-from openstack_dashboard import api
-
-from openstack_dashboard.dashboards.haAdmin.ha_clusters import tables as project_tables
-from openstack_dashboard.dashboards.haAdmin.ha_clusters \
-    import workflows as ha_cluster_workflows
-
+import ConfigParser
 import xmlrpclib
 
-import ConfigParser
-import MySQLdb, MySQLdb.cursors
+from django.utils.translation import ugettext_lazy as _
+from horizon import tables
+from horizon import workflows
+from openstack_dashboard.dashboards.haAdmin.ha_clusters import tables as project_tables
+from openstack_dashboard.dashboards.haAdmin.ha_clusters import workflows as ha_cluster_workflows
 
 config = ConfigParser.RawConfigParser()
 config.read('/refactor-HASS/hass.conf')

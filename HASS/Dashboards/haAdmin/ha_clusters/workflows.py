@@ -10,18 +10,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.utils.translation import ugettext_lazy as _
+import xmlrpclib
 
+from django.core import urlresolvers
+from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
-from horizon import workflows
 from horizon import messages
-from django.core import urlresolvers
-
+from horizon import workflows
 from openstack_dashboard import api
-
-import xmlrpclib
-import re
 
 
 class SetHAClusterInfoAction(workflows.Action):

@@ -1,19 +1,15 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.datastructures import SortedDict
-from django.core.urlresolvers import reverse_lazy
-from django.core.urlresolvers import reverse
-
-from horizon import tabs
-from horizon import exceptions
-from horizon import tables
-from horizon import forms
-
-from openstack_dashboard import api
-
-from openstack_dashboard.dashboards.haAdmin.ha_instances import tables as project_tables
-from openstack_dashboard.dashboards.haAdmin.ha_instances import forms as project_forms
-
 import xmlrpclib
+
+from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
+from django.utils.datastructures import SortedDict
+from django.utils.translation import ugettext_lazy as _
+from horizon import exceptions
+from horizon import forms
+from horizon import tables
+from openstack_dashboard import api
+from openstack_dashboard.dashboards.haAdmin.ha_instances import forms as project_forms
+from openstack_dashboard.dashboards.haAdmin.ha_instances import tables as project_tables
 
 
 class AddView(forms.ModalFormView):

@@ -1,6 +1,6 @@
+import horizon
 from django.utils.translation import ugettext_lazy as _
 
-import horizon
 
 class HA_Project(horizon.Dashboard):
     name = _("HA Project")
@@ -10,4 +10,3 @@ class HA_Project(horizon.Dashboard):
 
 
 horizon.register(HA_Project)
-

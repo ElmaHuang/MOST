@@ -1,17 +1,9 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-from django.utils.translation import ungettext_lazy
-
-from django import template
-from django.template.defaultfilters import title  # noqa
-
-from horizon.utils import filters
-
 import xmlrpclib
 
+from django.utils.translation import pgettext_lazy
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from horizon import tables
-
-from openstack_dashboard import api
 
 
 class GetNodeInfoAction(tables.LinkAction):

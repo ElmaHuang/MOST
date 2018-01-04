@@ -1,20 +1,11 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.datastructures import SortedDict
-from django.core.urlresolvers import reverse_lazy
-from django.core.urlresolvers import reverse
+import xmlrpclib
 
-from horizon import tabs
+from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tables
-from horizon import forms
 from horizon.utils import functions as utils
-
-from openstack_dashboard import api
 from openstack_dashboard.api import nova
-
 from openstack_dashboard.dashboards.haAdmin.ha_ipmi import tables as project_tables
-
-import xmlrpclib
 
 
 class Temperature:

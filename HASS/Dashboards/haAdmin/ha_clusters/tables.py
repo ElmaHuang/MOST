@@ -1,21 +1,11 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-from django.utils.translation import ungettext_lazy
-from django.core import urlresolvers
-
-from django import shortcuts
-from django import template
-from django.template.defaultfilters import title  # noqa
-
-from horizon.utils import filters
-
 import xmlrpclib
 
-from horizon import tables
+from django import shortcuts
+from django.core import urlresolvers
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from horizon import messages
-
-from openstack_dashboard import policy
-from openstack_dashboard import api
+from horizon import tables
 
 
 class DeleteHACluster(tables.DeleteAction):
