@@ -223,7 +223,7 @@ class HassAPI():
         elif self.args.command == "node-info-show":
             try:
                 HASS_result = self.server.getAllInfoOfNode(self.args.node)
-                self.generateSensorTable(HASS_result["info"])
+                self.generateSensorTable(HASS_result["data"]["info"])
                 print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
@@ -233,7 +233,7 @@ class HassAPI():
             try:
                 HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
                 print "Computing Node : " + self.args.node
-                self.generateSensorTable(HASS_result["info"])
+                self.generateSensorTable(HASS_result["data"]["info"])
                 print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
