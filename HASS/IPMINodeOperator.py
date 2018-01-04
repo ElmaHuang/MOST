@@ -98,11 +98,12 @@ class Operator(object):
         return result
 
     def rebootNode(self, node_name, default_wait_time=180):
+        result = None
         message = ""
         if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
             try:
                 ipmi_result = self.ipmi_module.rebootNode(node_name)
-                if ipmi_result["code"] == "0":
+                if ipmi_result.code == "succeed":
                     message += "reboot node success.The node is %s." % node_name
                     logging.info(message)
                     detection = self._checkDetectionAgent(node_name, default_wait_time)
