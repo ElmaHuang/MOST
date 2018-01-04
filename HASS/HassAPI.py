@@ -192,7 +192,7 @@ class HassAPI():
                 HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
                                        data=HASS_result["data"])
                 if HASS_result.code == "succeed":
-                    self.showTable(HASS_result.date.get("node_list"), self.TABLE.NODE)
+                    self.showTable(HASS_result.data.get("node_list"), self.TABLE.NODE)
                 else:
                     raise Exception
             except Exception as e:

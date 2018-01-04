@@ -32,7 +32,7 @@ class DeleteHACluster(tables.DeleteAction):
         for uuid in obj_ids:
             result = server.deleteCluster(uuid)
             name.append(self.table.get_object_by_id(uuid).cluster_name)  # get cluster's name
-            if result["code"] == '1':
+            if result["code"] == 'failed':
                 err_msg = result["message"]
                 messages.error(request, err_msg)
                 return False
@@ -67,7 +67,7 @@ class DeleteComputingNode(tables.DeleteAction):
             node_name = self.table.get_object_by_id(obj_id).computing_node_name
             result = server.deleteNode(cluster_id, node_name)
             node_names.append(node_name)
-            if result["code"] == '1':
+            if result["code"] == 'failed':
                 err_msg = result["message"]
                 messages.error(request, err_msg)
                 return False
