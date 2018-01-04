@@ -25,13 +25,11 @@ class InstanceTab(tabs.TableTab):
             instances, self._has_more = api.nova.server_list(
                 self.request,
                 search_opts={'marker': marker, 'paginate': True})
-
             return instances
         except Exception:
             self._has_more = False
             error_message = _('Unable to get instances')
             exceptions.handle(self.request, error_message)
-
             return []
 
 

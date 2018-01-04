@@ -1,3 +1,4 @@
+import logging
 import xmlrpclib
 
 from django.core.urlresolvers import reverse
@@ -11,6 +12,8 @@ from openstack_dashboard import api
 from openstack_dashboard.dashboards.haProject.ha_instances \
     import forms as project_forms
 from openstack_dashboard.dashboards.haProject.ha_instances import tables as project_tables
+
+LOG = logging.getLogger(__name__)
 
 
 class AddView(forms.ModalFormView):
@@ -68,12 +71,15 @@ class IndexView(tables.DataTableView):
         ha_instances = []
         for (uuid, name) in clusters:
             _cluster_instances = server.listInstance(uuid)
-            result, cluster_instances = _cluster_instances.split(";")
-            if result == '0':
+            # result, cluster_instances = _cluster_instances.split(";")
+            result = _cluster_instances["code"]
+            cluster_instances = _cluster_instances["data"]["instance_list"]
+            if result == 'succeed':
                 if cluster_instances != "":
-                    cluster_instances = cluster_instances.split(",")
-                    for _instance_id in cluster_instances:
-                        instance_id = _instance_id.split(":")[0]
+                    # cluster_instances = cluster_instances.split(",")
+                    # for _instance_id in cluster_instances:
+                    for _instance in cluster_instances:
+                        instance_id = _instance[0]
                         try:
                             instance = api.nova.server_get(self.request, instance_id)
                             instance.cluster_name = name
