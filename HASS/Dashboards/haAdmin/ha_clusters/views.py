@@ -8,7 +8,7 @@ from openstack_dashboard.dashboards.haAdmin.ha_clusters import tables as project
 from openstack_dashboard.dashboards.haAdmin.ha_clusters import workflows as ha_cluster_workflows
 
 config = ConfigParser.RawConfigParser()
-config.read('/refactor-HASS/hass.conf')
+config.read('/MOST/HASS/hass.conf')
 
 
 class Cluster:
@@ -43,11 +43,11 @@ class IndexView(tables.DataTableView):
             instance_number = 0
             # node_info = server.listNode(uuid)["nodeList"]
             node_info = server.listNode(uuid)
-            if node_info == "succeed":
+            if node_info["code"] == "succeed":
                 node_number = len(node_info["data"]["node_list"])
                 # instance_info = server.listInstance(uuid)["instanceList"]
                 instance_info = server.listInstance(uuid)
-                if instance_info == "succeed":
+                if instance_info["code"] == "succeed":
                     instance_number = len(instance_info["data"]["instance_list"])
                     clusters.append(Cluster(name, uuid, node_number, instance_number))
         return clusters
@@ -70,7 +70,6 @@ class DetailView(tables.DataTableView):
                 for node in result:
                     name = node[0]
                     full_instance_information = server.listInstance(self.kwargs["cluster_id"])
-
                     instance_number = self.get_instance_number(name, full_instance_information)
                     computing_nodes.append(ComputingNode(instance_id, name, instance_number))
                     instance_id = instance_id + 1
