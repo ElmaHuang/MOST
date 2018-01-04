@@ -3,6 +3,7 @@ import xmlrpclib
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
+from horizon import messages
 from horizon import tables
 
 
@@ -41,8 +42,8 @@ class StartNodeAction(tables.BatchAction):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.startNode(obj_id)
-        if result[0] == "1":
-            err_msg = result.split(";")[1]
+        if result["code"] == "failed":
+            err_msg = result["message"]
             messages.error(request, err_msg)
 
 
@@ -67,8 +68,8 @@ class RebootNodeAction(tables.DeleteAction):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.rebootNode(obj_id)
-        if result[0] == "1":
-            err_msg = result.split(";")[1]
+        if result["code"] == "failed":
+            err_msg = result["meaasge"]
             messages.error(request, err_msg)
 
 
@@ -102,8 +103,8 @@ class ShutOffNodeAction(tables.BatchAction):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.shutOffNode(obj_id)
-        if result[0] == "1":
-            err_msg = result.split(";")[1]
+        if result["code"] == "failed":
+            err_msg = result["message"]
             messages.error(request, err_msg)
 
 

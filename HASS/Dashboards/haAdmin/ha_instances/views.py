@@ -73,8 +73,8 @@ class IndexView(tables.DataTableView):
             _cluster_instances = server.listInstance(uuid)
             # result,cluster_instances = _cluster_instances.split(";")
             result = _cluster_instances["code"]
-            cluster_instances = _cluster_instances["instanceList"]
-            if result == '0':
+            cluster_instances = _cluster_instances["data"]["instance_list"]
+            if result == 'succeed':
                 if cluster_instances != "":
                     # cluster_instances = cluster_instances.split(",")
                     for _instance in cluster_instances:
@@ -156,7 +156,7 @@ class IndexView(tables.DataTableView):
                 # result, node_list = server.listNode(cluster_id).split(";")
                 cluster_node = server.listNode(cluster_id)
                 result = cluster_node["code"]
-                node_list = cluster_node["nodeList"]
+                node_list = cluster_node["data"]["node_list"]
                 cluster_nodes = []
                 for node in node_list:
                     cluster_nodes.append(node[0])

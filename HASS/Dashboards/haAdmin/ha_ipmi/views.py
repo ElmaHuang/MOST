@@ -17,14 +17,14 @@ class Temperature:
         self.lower_critical = lower_critical
         self.upper_critical = upper_critical
 
-
+'''
 class Voltage:
     def __init__(self, id, sensor_ID, device, value):
         self.id = id
         self.sensor_ID = sensor_ID
         self.device = device
         self.value = value
-
+'''
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.Ipmi_CN_Table
@@ -42,7 +42,7 @@ class IndexView(tables.DataTableView):
 
 
 class DetailView(tables.MultiTableView):
-    table_classes = (project_tables.IPMINodeTemperatureTable, project_tables.IPMINodeVoltageTable)
+    table_classes = (project_tables.IPMINodeTemperatureTable)
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
 
@@ -60,10 +60,10 @@ class DetailView(tables.MultiTableView):
                 if "Temp" in data[0]:
                     temp_data.append(Temperature(data_id, data[0], data[1], data[2], data[3], data[4]))
                     data_id = data_id + 1
-                else:
-                    self.volt_list.append(data)
+                #else:
+                    #self.volt_list.append(data)
         return temp_data
-
+    '''
     def get_IPMI_Volt_data(self):
         volt_data = []
         volt_id = 0
@@ -71,3 +71,4 @@ class DetailView(tables.MultiTableView):
             volt_data.append(Voltage(volt_id, volt[0], volt[1], volt[2]))
             volt_id = volt_id + 1
         return volt_data
+    '''

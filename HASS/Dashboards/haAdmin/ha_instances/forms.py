@@ -78,18 +78,19 @@ class AddForm(forms.SelfHandlingForm):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.addInstance(data['cluster_id'], data['instance_id'])
-        if result["code"] == '1':
+        if result["code"] == 'failed':
             err_msg = _(result["message"])
             messages.error(request, err_msg)
             return False
-        try:
-            instance_name = api.nova.server_get(request, data['instance_id']).name
-        except Exception:
-            msg = _('Unable to retrieve instance.')
-            exceptions.handle(self.request, msg)
-        success_message = _('Add Instance:%s to HA Cluster.' % instance_name)
-        messages.success(request, success_message)
-        return True
+        else:
+            try:
+                instance_name = api.nova.server_get(request, data['instance_id']).name
+                success_message = _('Add Instance:%s to HA Cluster.' % instance_name)
+                messages.success(request, success_message)
+            except Exception:
+                msg = _('Unable to retrieve instance.')
+                exceptions.handle(self.request, msg)
+            return True
 
 
 class UpdateForm(forms.SelfHandlingForm):
@@ -116,7 +117,7 @@ class UpdateForm(forms.SelfHandlingForm):
         if data['protection'] == 'False':
             cluster_id = self.get_cluster_by_instance(server, data['instance_id'])
             result = server.deleteInstance(cluster_id, data['instance_id'])
-            if result["code"] == '1':
+            if result["code"] == 'failed':
                 err_msg = result["message"]
                 messages.error(request, err_msg)
                 return False
@@ -140,9 +141,9 @@ class UpdateForm(forms.SelfHandlingForm):
             _ha_instances = server.listInstance(uuid)
             # result,ha_instances = _ha_instances.split(";")
             result = _ha_instances["code"]
-            ha_instance = _ha_instances["instanceList"]
+            ha_instance = _ha_instances["data"]["instance_list"]
             ha_instances = []
-            if result == '0':
+            if result == 'succeed':
                 for _instance in ha_instance:
                     ha_instances.append(_instance[0])
                 # ha_instances = ha_instances.split(",")
