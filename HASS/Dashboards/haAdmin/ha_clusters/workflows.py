@@ -185,13 +185,13 @@ class AddComputingNodeWorkflow(workflows.Workflow):
         for node in context_computing_nodes:
             node_list.append(node)
         cluster_id = self.get_cluster_id(self.get_absolute_url())
-        result = server.addNode(cluster_id, node_list).split(";")
+        result = server.addNode(cluster_id, node_list)
         self.success_url = urlresolvers.reverse(self.success_url, args=[cluster_id])
 
-        if result["code"] == '1':  # error
+        if result["code"] == 'failed':  # error
             self.failure_message = result["message"]
             return False
-        self.success_message = _('Add new Computing Node %s to HA Cluster.' % (",".join(node_list)))
+        self.success_message = _('Add new Computing Node %s to HA Cluster. %s' % (",".join(node_list),result["message"]))
         messages.success(request, self.success_message)
         return True
 
