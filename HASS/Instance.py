@@ -19,8 +19,8 @@ class Instance(object):
         return self.nova_client.isInstanceGetVolume(self.id)
 
     def updateInfo(self):
-        self.host = self.nova_client.getInstanceHost(self.id)
         self.status = self.nova_client.getInstanceState(self.id)
+        self.host = self.nova_client.getInstanceHost(self.id)
         self.network = self.nova_client.getInstanceNetwork(self.id)
 
     def getInfo(self):

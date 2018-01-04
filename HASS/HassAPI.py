@@ -9,13 +9,13 @@
 #:Description:
 #   Command Line Interface for users.
 ##########################################################
-import xmlrpclib
 import ConfigParser
 import argparse
+import xmlrpclib
+
+from prettytable import PrettyTable
 
 from Response import Response
-from enum import Enum
-from prettytable import PrettyTable
 
 
 def enum(**enums):
@@ -256,7 +256,7 @@ class HassAPI():
             try:
                 HASS_result = self.server.listInstance(self.args.uuid)
                 HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
-                                            data=HASS_result["data"])
+                                       data=HASS_result["data"])
                 if HASS_result.code == "succeed":
                     self.showTable(HASS_result.data.get("instance_list"), self.TABLE.INSTANCE)
                 else:
