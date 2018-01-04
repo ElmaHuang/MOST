@@ -1,7 +1,19 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   Command Line Interface for users.
+##########################################################
 import xmlrpclib
 import ConfigParser
 import argparse
 
+from Response import Response
 from enum import Enum
 from prettytable import PrettyTable
 
@@ -18,7 +30,7 @@ class HassAPI():
                                                                                                   "rpc_password") + "@127.0.0.1:" + self.config.get(
             "rpc", "rpc_bind_port")
         self.server = xmlrpclib.ServerProxy(self.authUrl)
-        self.HASS_result = None
+        # self.HASS_result = None
         # global variable for sensor get mapping
         self.TABLE = enum(CLUSTER='cluster', NODE='node', INSTANCE='instance')
         self.bcolors()
@@ -38,10 +50,11 @@ class HassAPI():
         self.END_color = '\033[0m'
 
     def showResult(self, result):
-        if result["code"] == "0":
-            return self.OK_color + "[Success] " + self.END_color + result["message"]
+        result = Response(code=result["code"], message=result["message"], data=result["data"])
+        if result.code == "succeed":
+            return self.OK_color + "[Success] " + self.END_color + result.message
         else:
-            return self.ERROR_color + "[Error] " + self.END_color + result["message"]
+            return self.ERROR_color + "[Error] " + self.END_color + result.message
 
     def showTable(self, result, type):
         # cluster list info
@@ -136,48 +149,50 @@ class HassAPI():
         if self.args.command == "cluster-create":
             try:
                 if self.args.nodes != None:
-                    self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(","))
+                    HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(","))
                 else:
-                    self.HASS_result = self.server.createCluster(self.args.name, [])
+                    HASS_result = self.server.createCluster(self.args.name, [])
                     # return createCluster_result["code"]+";"+createCluster_result["message"]
-                print self.showResult(self.HASS_result)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "cluster-delete":
             try:
-                self.HASS_result = self.server.deleteCluster(self.args.uuid)
+                HASS_result = self.server.deleteCluster(self.args.uuid)
                 # return result["code"] + ";" + result["message"]
-                print self.showResult(self.HASS_result)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "cluster-list":
             try:
-                self.HASS_result = self.server.listCluster()
-                self.showTable(self.HASS_result, self.TABLE.CLUSTER)
+                HASS_result = self.server.listCluster()
+                self.showTable(HASS_result, self.TABLE.CLUSTER)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-add":
             try:
-                self.HASS_result = self.server.addNode(self.args.uuid, self.args.nodes.strip().split(","))
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.addNode(self.args.uuid, self.args.nodes.strip().split(","))
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-delete":
             try:
-                self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.deleteNode(self.args.uuid, self.args.node)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-list":
             try:
-                self.HASS_result = self.server.listNode(self.args.uuid)
-                if self.HASS_result["code"] == "0":
-                    self.showTable(self.HASS_result["nodeList"], self.TABLE.NODE)
+                HASS_result = self.server.listNode(self.args.uuid)
+                HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
+                                       data=HASS_result["data"])
+                if HASS_result.code == "succeed":
+                    self.showTable(HASS_result.date.get("node_list"), self.TABLE.NODE)
                 else:
                     raise Exception
             except Exception as e:
@@ -186,62 +201,64 @@ class HassAPI():
 
         elif self.args.command == "node-start":
             try:
-                self.HASS_result = self.server.startNode(self.args.node)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.startNode(self.args.node)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-shutOff":
             try:
-                self.HASS_result = self.server.shutOffNode(self.args.node)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.shutOffNode(self.args.node)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-reboot":
             try:
-                self.HASS_result = self.server.rebootNode(self.args.node)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.rebootNode(self.args.node)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-show":
             try:
-                self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
-                self.generateSensorTable(self.HASS_result["info"])
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.getAllInfoOfNode(self.args.node)
+                self.generateSensorTable(HASS_result["info"])
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-get":
             self.type_list = self.args.types.strip().split(",")
             try:
-                self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
+                HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
                 print "Computing Node : " + self.args.node
-                self.generateSensorTable(self.HASS_result["info"])
-                print self.showResult(self.HASS_result)
+                self.generateSensorTable(HASS_result["info"])
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "instance-add":
             try:
-                self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "instance-delete":
             try:
-                self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid)
-                print self.showResult(self.HASS_result)
+                HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid)
+                print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "instance-list":
             try:
-                self.HASS_result = self.server.listInstance(self.args.uuid)
-                if self.HASS_result["code"] == "0":
-                    self.showTable(self.HASS_result["instanceList"], self.TABLE.INSTANCE)
+                HASS_result = self.server.listInstance(self.args.uuid)
+                HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
+                                            data=HASS_result["data"])
+                if HASS_result.code == "succeed":
+                    self.showTable(HASS_result.data.get("instance_list"), self.TABLE.INSTANCE)
                 else:
                     raise Exception
             except Exception as e:
