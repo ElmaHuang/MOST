@@ -174,9 +174,10 @@ class IPMIManager(object):
         device = raw_data[2].split(":")[1].strip()
         value = raw_data[4].split(":")[1]
         value = re.findall("[0-9]+", value)[0].strip()  # use regular expression to filt
-        lower_critical = self.TEMP_LOWER_CRITICAL
-        upper_critical = self.TEMP_UPPER_CRITICAL
-        return [sensor_id, device, value, lower_critical, upper_critical]
+        # lower_critical = self.TEMP_LOWER_CRITICAL
+        # upper_critical = self.TEMP_UPPER_CRITICAL
+        # return [sensor_id, device, value, lower_critical, upper_critical]
+        return [sensor_id, device, value]
 
     def getNodeInfoByType(self, node_name, sensor_type_list):
         code = ""
@@ -195,7 +196,8 @@ class IPMIManager(object):
                 # data clean
                 sensor_data = self.dataClean(response)
                 result_list.append(sensor_data)
-                code = "0"
+                # code = "0"
+                code = "succeed"
                 message = message + "Successfully get computing node : %s's %s information." % (
                     node_name, sensor_type_list)
                 logging.info("IpmiModule getNodeInfo - " + message)
@@ -203,9 +205,13 @@ class IPMIManager(object):
                 message = message + "Error! Unable to get computing node : %s's %s information." % (
                     node_name, sensor_type_list)
                 logging.error("IpmiModule getNodeInfo - %s" % e)
-                code = "1"
+                # code = "1"
+                code = "failed"
         print result_list
-        result = {"code": code, "info": result_list, "message": message}
+        # result = {"code": code, "info": result_list, "message": message}
+        result = Response(code=code,
+                          message=message,
+                          data={"info": result_list})
         return result
 
     def getAllInfoByNode(self, node_name):
@@ -215,10 +221,9 @@ class IPMIManager(object):
             logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
             return result
         except Exception as e:
-            logging.error("IPMIModule--getAllInfoNode fail"+str(e))
+            logging.error("IPMIModule--getAllInfoNode fail" + str(e))
 
     def getOSStatus(self, node_name):
-        status = "OK"
         interval = (IPMIConf.WATCHDOG_THRESHOLD / 2)
         prev_initial = None
         prev_present = None
@@ -277,7 +282,8 @@ class IPMIManager(object):
         status = True
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            result = {"code": 1}
+            # result = {"code": 1}
+            result = Response(code="failed")
             return result
         try:
             command = base + IPMIConf.RESET_WATCHDOG
