@@ -50,11 +50,11 @@ class InstanceFailure(threading.Thread):
                                 print "recovery " + str(
                                     self.failed_instances) + "fail or the instance is not HA instance."
                             else:
-                                print "recovery " + str(self.fail_instance) + " success"
+                                print "recovery " + str(self.failed_instances) + " success"
                         except Exception as e:
                             print str(e)
                         finally:
-                            self.fail_instance = []
+                            self.failed_instances = []
                     elif not libvirt_connection.isAlive() == 1:
                         # 1 if alive, 0 if dead, -1 on error
                         break
