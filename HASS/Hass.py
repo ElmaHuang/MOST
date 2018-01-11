@@ -14,17 +14,17 @@
 #   Client can use function in Hass class directly
 ##########################################################
 
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
-from base64 import b64decode
 import ConfigParser
 import logging
 import os
 import sys
+from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from base64 import b64decode
 
-from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
+from RecoveryManager import RecoveryManager
 from Response import Response
 
 

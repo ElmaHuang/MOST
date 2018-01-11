@@ -11,8 +11,8 @@ III_SERVER_SUCCESS_MSG = "start/running"
 # III_SERVER_FAIL_MSG = "stop/waiting"
 III_SERVER_START_COMMAND = "service HASSd start"
 III_SERVER_STATUS_COMMAND = "service HASSd status"
-
-MOST_SERVER_START_COMMAND = "python /home/controller/Desktop/MOST/HASS/Hass.py"
+MOST_HASS_PATH = "/home/controller/Desktop/MOST/HASS/"
+MOST_SERVER_START_COMMAND = "python Hass.py"
 
 
 def do():
@@ -44,8 +44,12 @@ def _deleteInstance():
     return Instance.delete()
 
 
-def _local_exec(cmd):
-    p = subprocess.Popen(cmd.split(), stdin=subprocess.PIPE, shell=False, stdout=open(os.devnull, 'w'))
+def _local_exec(cmd, iii=True):
+    if iii == True:
+        p = subprocess.Popen(cmd.split(), stdin=subprocess.PIPE, shell=False, stdout=open(os.devnull, 'w'))
+    else:
+        p = subprocess.Popen(cmd.split(), cwd=MOST_HASS_PATH, stdin=subprocess.PIPE, shell=False,
+                             stdout=open(os.devnull, 'w'))
     return p.communicate()
 
 
