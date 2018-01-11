@@ -18,7 +18,7 @@ def run():
 
     ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
     try:
-        result = ClusterManager.addInstance(cluster_id, instance_id)
+        result = ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
         if result.code == "failed":
             return True
         else:
