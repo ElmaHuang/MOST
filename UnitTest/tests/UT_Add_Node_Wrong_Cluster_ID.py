@@ -12,7 +12,7 @@ def run():
 
     try:
         result = ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
-        if result["code"] == "0":
+        if result.code == "succeed":
             return False
         else:
             return True

@@ -12,7 +12,7 @@ def run():
     cluster_id = "wrong"
     try:
         result = ClusterManager.deleteCluster(cluster_id)
-        if result["code"] == "1":
+        if result.code == "failed":
             return True
         else:
             return False

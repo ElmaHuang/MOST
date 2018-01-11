@@ -9,12 +9,15 @@ NODE_NAME = ["compute1"]
 
 def run():
     ClusterManager.init()
-    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
+    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
+    cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
 
     try:
         result = ClusterManager.listNode(cluster_id)
-        if len(result["nodeList"]) == 1:
+        node_list = result.data.get("node_list")
+
+        if len(node_list) == 1:
             return True
         else:
             return False

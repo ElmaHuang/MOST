@@ -11,11 +11,12 @@ WRONG_NODE_NAME = ["compute5"]
 
 def run():
     ClusterManager.init()
-    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
+    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
+    cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
     try:
         result = ClusterManager.deleteNode(cluster_id, WRONG_NODE_NAME[0], write_DB=False)
-        if result["code"] == "1":
+        if result.code == "succeed":
             return True
         else:
             return False

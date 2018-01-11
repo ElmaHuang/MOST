@@ -9,10 +9,11 @@ NODE_NAME = ["compute6"]
 
 def run():
     ClusterManager.init()
-    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
+    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
+    cluster_id = cluster_id.data.get("cluster_id")
     try:
         result = ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
-        if result["code"] == "0":
+        if result.code == "succeed":
             return False
         else:
             return True
