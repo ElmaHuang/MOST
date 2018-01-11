@@ -37,7 +37,7 @@
 #UT_ShutOff_Node    description
 #UT_Start_Node    description
 #UT_Reboot_Node    description
-UT_Recover_Qemu-KVM_Service    description
-#UT_Detect_Network    description
+#UT_Recover_Qemu-KVM_Service    description
+UT_Recover_Network_Isolaiton    description
 #UT_Detect_OS    description
 #UT_Detect_Power    description

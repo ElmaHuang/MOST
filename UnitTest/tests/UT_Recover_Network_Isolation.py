@@ -12,42 +12,66 @@ CLUSTER_ID = "clusterid"
 HOST = "compute3"
 PORT = 2468
 
+ipmi_manager = IPMIManager()
 
-def run(check_timeout=300):
-    node = Node(HOST, CLUSTER_ID)
-    thread = node.detection_thread
+
+def run():
     client = _create_ssh_client(HOST)
-    ipmi_manager = IPMIManager()
     _remote_exec(client, "sudo systemctl stop networking.service")
-    detect_time = 20
+    result = detection_network_fail(20)
+    if result:
+        print "detect network isolation successfuly"
+        recover = recover_network_fail(180)
+        if recover:
+            return True
+        else:
+            return False
+    else:
+        print "detect network isolation fail"
+        return False
+
+
+def recover_network_fail(detect_time=5):
+    ipmi_manager.rebootNode(HOST)
     result = False
     try:
         while detect_time > 0:
-            fail = thread.detect()
-            print fail
-            if fail == "network":
+            state = _get_detect_result()
+            if "health" in state:
                 result = True
-            detect_time -= 1
-            time.sleep(1)
-        result = False
+                break
+            else:
+                detect_time -= 1
+                time.sleep(1)
     except Exception as e:
         print str(e)
         result = False
-    finally:
-        ipmi_manager.rebootNode(HOST)
-        return result
-        #     time.sleep(5)  # wait node to reboot
-        #     boot_up = None
-        #     while check_timeout > 0:
-        #         boot_up = _check_boot_up()
-        #         if boot_up == "OK":
-        #             print "%s boot up!" % HOST
-        #             check_timeout = 0
-        #         time.sleep(1)
-        #         check_timeout -= 1
-        #     if boot_up != "OK":
-        #         print "%s not boot up!" % HOST
-        #         return False
+    return result
+
+
+def detection_network_fail(detect_time=5):
+    result = False
+    try:
+        while detect_time > 0:
+            fail = _get_detect_result()
+            print fail
+            if "network" in fail:
+                result = True
+                break
+            else:
+                detect_time -= 1
+                time.sleep(1)
+    except Exception as e:
+        print str(e)
+        result = False
+    return result
+
+
+def _get_detect_result():
+    node = Node(HOST, CLUSTER_ID)
+    thread = node.detection_thread
+    result = thread.detect()
+    return result
 
 
 def _remote_exec(client, cmd):
