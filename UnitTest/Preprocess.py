@@ -26,7 +26,7 @@ def server_start(iii_support=True):
         if III_SERVER_SUCCESS_MSG in status:
             raise Exception("Server not ready !")
     else:
-        _local_exec(MOST_SERVER_START_COMMAND,False)
+        _local_exec(MOST_SERVER_START_COMMAND, False)
 
     print "SERVER READY"
     time.sleep(1)
@@ -48,9 +48,8 @@ def _local_exec(cmd, iii=True):
     if iii == True:
         p = subprocess.Popen(cmd.split(), stdin=subprocess.PIPE, shell=False, stdout=open(os.devnull, 'w'))
     else:
-        p = subprocess.Popen(cmd.split(), cwd=MOST_HASS_PATH, stdin=subprocess.PIPE, shell=False,
-                             stdout=open(os.devnull, 'w'))
-    return p.communicate()
+        p = subprocess.Popen(cmd.split(), cwd=MOST_HASS_PATH)
+        # return p.communicate()
 
 
 def test():
