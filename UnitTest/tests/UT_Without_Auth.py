@@ -18,4 +18,4 @@ def run():
         print str(e)
         return True
     finally:
-        Postprocess.server_stop()
+        Postprocess.server_stop(False)
