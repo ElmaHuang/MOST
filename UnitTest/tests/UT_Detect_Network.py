@@ -31,6 +31,8 @@ def run(check_timeout=300):
         return False
     except Exception as e:
         print str(e)
+        return False
+    '''
     finally:
         ipmi_manager.rebootNode(HOST)
         time.sleep(5)  # wait node to reboot
@@ -45,6 +47,7 @@ def run(check_timeout=300):
         if boot_up != "OK":
             print "%s not boot up!" % HOST
             return False
+    '''
 
 
 def _remote_exec(client, cmd):
