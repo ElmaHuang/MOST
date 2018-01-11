@@ -12,14 +12,15 @@ NODE_NAME = ["compute1"]
 def run():
     ClusterManager.init()
     instance_id = Preprocess.create_with_provider_instance()
-    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
+    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
+    cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
     ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
 
     wrong_cluster_id = "wrong id"
     try:
         result = ClusterManager.deleteInstance(wrong_cluster_id, instance_id, write_DB=False)
-        if result["code"] == "1":
+        if result.code == "failed":
             return True
         else:
             return False
