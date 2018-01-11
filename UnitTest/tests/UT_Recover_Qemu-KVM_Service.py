@@ -7,7 +7,7 @@ sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from Node import Node
 
 CLUSTER_ID = "clusterid"
-HOST = "compute3"
+HOST = "compute4"
 PORT = 2468
 
 
@@ -49,7 +49,7 @@ def detection_service_fail(detect_time=5):
         while detect_time > 0:
             fail = _get_detect_result()
             print fail
-            if fail == "service":
+            if "service" in fail:
                 result = True
             else:
                 detect_time -= 1
