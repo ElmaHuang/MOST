@@ -10,7 +10,7 @@ def run():
     ipmi_manager = IPMIManager()
     try:
         result = ipmi_manager.getOSStatus(HOST)
-        if result:
+        if result == "OK":
             return True
         else:
             return False
