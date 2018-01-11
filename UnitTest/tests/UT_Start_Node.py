@@ -13,25 +13,30 @@ def run(check_timeout=300):
     ipmi_manager = IPMIManager()
     result = ipmi_manager.startNode(HOST)
 
-    while check_timeout > 0:
-        response = _check_boot_up()
-        print response
-        if response == "OK" and result.code == "succeed":
-            return True
-        time.sleep(1)
+    response = _check_boot_up(check_timeout)
+    print response
+    if response == "OK" and result.code == "succeed":
+        return True
+        # time.sleep(5)
     return False
 
 
-def _check_boot_up():
+def _check_boot_up(check_timeout):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setblocking(0)
     sock.settimeout(0.5)
     sock.connect((HOST, PORT))
-    try:
-        line = "polling request"
-        sock.sendall(line)
-        data, addr = sock.recvfrom(1024)
-        return data
-    except Exception as e:
-        print str(e)
-        return "Error"
+    while check_timeout > 0:
+        try:
+            line = "polling request"
+            sock.sendall(line)
+            data, addr = sock.recvfrom(1024)
+            if data == "OK":
+                return data
+            else:
+                time.sleep(1)
+                check_timeout -= 1
+                continue
+        except Exception as e:
+            print str(e)
+            return "Error"
