@@ -210,7 +210,8 @@ class ClusterManager():
                     instance_id, cluster_id))
                 return result
             except Exception as e:
-                message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" + str(e) % (
+                print str(e)
+                message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" % (
                     instance_id, cluster_id)
                 logging.error(message)
                 # result = {"code": "1", "clusterId": cluster_id, "message": message}

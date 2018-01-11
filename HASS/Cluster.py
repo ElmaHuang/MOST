@@ -104,7 +104,8 @@ class Cluster(ClusterInterface):
                 # Live migration VM to cluster node
                 # print "start live migration"
                 final_host = self.checkInstanceHost(instance_id)
-                if final_host == None: final_host = self.liveMigrateInstance(instance_id)
+                if final_host == None:
+                    final_host = self.liveMigrateInstance(instance_id)
                 instance = Instance(id=instance_id,
                                     name=self.nova_client.getInstanceName(instance_id),
                                     host=final_host,
