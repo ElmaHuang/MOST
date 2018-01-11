@@ -22,9 +22,9 @@ def server_stop(iii_support=True):
         if SERVER_SUCCESS_MSG in status:
             raise Exception("Server didn't stop !")
     else:
-        result = _local_get_output(GET_HASS_PID)
-        print "result:", str(result)
-        _local_exec("sudo killall python")
+        pid = _local_get_output(GET_HASS_PID)
+        # print "result:", str(result)
+        _local_exec("sudo kill %s" %pid)
 
     print "SERVER STOP"
 
@@ -36,5 +36,5 @@ def _local_exec(cmd):
 
 def _local_get_output(cmd):
     result = subprocess.check_output(cmd, shell=True)
-    print str(result)
+    # print str(result)
     return result
