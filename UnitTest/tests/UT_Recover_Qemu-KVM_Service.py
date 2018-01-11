@@ -30,17 +30,19 @@ def run():
 def recover_service_fail(client, detect_time=5):
     _remote_exec(client, "sudo service qemu-kvm start")
     result = False
-    while detect_time > 0:
-        try:
+    try:
+        while detect_time > 0:
             state = _get_detect_result()
             if state == "":
                 result = True
+                break
             else:
-                result = False
-        except Exception as e:
-            print str(e)
-            result = False
-        return result
+                detect_time -= 1
+                time.sleep(1)
+    except Exception as e:
+        print str(e)
+        result = False
+    return result
 
 
 def detection_service_fail(detect_time=5):
@@ -51,10 +53,10 @@ def detection_service_fail(detect_time=5):
             print fail
             if "service" in fail:
                 result = True
+                break
             else:
                 detect_time -= 1
                 time.sleep(1)
-        if detect_time == 0: result = False
     except Exception as e:
         print str(e)
         result = False
