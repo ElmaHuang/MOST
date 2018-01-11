@@ -1,7 +1,9 @@
 import subprocess
 import threading
 import time
+
 import libvirt
+
 # import ConfigParse
 import InstanceEvent
 from HAInstance import HAInstance
@@ -43,7 +45,6 @@ class InstanceFailure(threading.Thread):
                 while True:
                     time.sleep(5)
                     if self.failed_instances != []:
-                        # libvirt_connect.close()
                         try:
                             result = self.recoverFailedInstance()
                             if not result:
@@ -55,9 +56,11 @@ class InstanceFailure(threading.Thread):
                             print str(e)
                         finally:
                             self.failed_instances = []
-                    elif not libvirt_connection.isAlive() == 1:
-                        # 1 if alive, 0 if dead, -1 on error
+                    if not self._check_libvirt_connection(libvirt_connection):
                         break
+                        # elif not libvirt_connection.isAlive() == 1:
+                        # 1 if alive, 0 if dead, -1 on error
+                        # break
                         # time.sleep(5)
 
     def createLibvirtDetectionThread(self):
@@ -79,6 +82,15 @@ class InstanceFailure(threading.Thread):
                 return connection
         except Exception as e:
             print "failed to open connection --exception" + str(e)
+
+    def _check_libvirt_connection(self, libvirt_connection):
+        try:
+            if libvirt_connection.isAlive() == 1:
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def _checkVMState(self, connect, domain, event, detail, opaque):
         # event:cloume,detail:row
