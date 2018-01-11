@@ -13,7 +13,7 @@ def run(check_timeout=300):
     ipmi_manager = IPMIManager()
     result = ipmi_manager.startNode(HOST)
     print "wait to node boot up"
-    time.sleep(100)
+    time.sleep(130)
     response = _check_boot_up(check_timeout)
     print response
     if response == "OK" and result.code == "succeed":
@@ -33,6 +33,7 @@ def _check_boot_up(check_timeout):
             line = "polling request"
             sock.sendall(line)
             data, addr = sock.recvfrom(1024)
+            print "data:",data
             if data == "OK":
                 return data
             else:
