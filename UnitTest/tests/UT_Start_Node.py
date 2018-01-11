@@ -23,7 +23,7 @@ def run(check_timeout=300):
 
 
 def _check_boot_up(check_timeout):
-    print "strat check detectionagent in compute node"
+    print "strat check detectionagent in %s"%HOST
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setblocking(0)
     sock.settimeout(0.5)
