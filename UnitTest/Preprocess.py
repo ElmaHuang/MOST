@@ -12,7 +12,7 @@ III_SERVER_SUCCESS_MSG = "start/running"
 III_SERVER_START_COMMAND = "service HASSd start"
 III_SERVER_STATUS_COMMAND = "service HASSd status"
 MOST_HASS_PATH = "/home/controller/Desktop/MOST/HASS/"
-MOST_SERVER_START_COMMAND = "python Hass.py"
+MOST_SERVER_START_COMMAND = "python Hass.py &"
 
 
 def do():
