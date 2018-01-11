@@ -1,11 +1,9 @@
+import socket
 import sys
+import time
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from IPMIModule import IPMIManager
-import time
-import subprocess
-import os
-import socket
 
 HOST = "compute3"
 PORT = 2468
@@ -18,7 +16,7 @@ def run(check_timeout=300):
     while check_timeout > 0:
         response = _check_boot_up()
         print response
-        if response == "OK" and result["code"] == "0":
+        if response == "OK" and result.code == "succeed":
             time.sleep(5)
             return True
         time.sleep(1)

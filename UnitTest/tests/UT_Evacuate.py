@@ -1,13 +1,13 @@
 import sys
 
-sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
-from ClusterManager import ClusterManager
+import Config
+import Postprocess
+import Preprocess
 from Instance import Instance
+
+sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from Node import Node
 from NovaClient import NovaClient
-import Preprocess
-import Postprocess
-import Config
 
 CLUSTER_ID = "clusterid"
 HOST = "compute1"

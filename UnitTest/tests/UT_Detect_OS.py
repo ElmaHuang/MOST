@@ -1,11 +1,11 @@
+import socket
 import sys
+import time
+import paramiko
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from IPMIModule import IPMIManager
 from Node import Node
-import paramiko
-import socket
-import time
 
 CLUSTER_ID = "clusterid"
 HOST = "compute4"
