@@ -12,7 +12,7 @@ PORT = 2468
 def run(check_timeout=300):
     ipmi_manager = IPMIManager()
     result = ipmi_manager.startNode(HOST)
-    print "wait to node boot up"
+    print "wait to %s boot up" % HOST
     time.sleep(130)
     response = _check_boot_up(check_timeout)
     print response
@@ -23,7 +23,7 @@ def run(check_timeout=300):
 
 
 def _check_boot_up(check_timeout):
-    print "strat check detectionagent in %s"%HOST
+    print "strat check detectionagent in %s" % HOST
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setblocking(0)
     sock.settimeout(0.5)
@@ -33,7 +33,7 @@ def _check_boot_up(check_timeout):
             line = "polling request"
             sock.sendall(line)
             data, addr = sock.recvfrom(1024)
-            print "data:",data
+            print "data:", data
             if data == "OK":
                 return data
             else:

@@ -34,9 +34,9 @@
 #UT_Get_Sensor_Status    description
 #UT_Get_Sensor_Value    description
 #UT_Evacuate    description
-UT_ShutOff_Node    description
-UT_Start_Node    description
-#UT_Reboot_Node    description
+#UT_ShutOff_Node    description
+#UT_Start_Node    description
+UT_Reboot_Node    description
 #UT_Detect_Service    description
 #UT_Detect_Network    description
 #UT_Detect_OS    description
