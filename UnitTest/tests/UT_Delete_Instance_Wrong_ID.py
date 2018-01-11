@@ -21,7 +21,7 @@ def run():
     try:
         result = ClusterManager.deleteInstance(cluster_id, wrong_instance_id, write_DB=False)
         print result
-        if result.code == "succeed":
+        if result.code == "failed":
             return True
         else:
             return False
