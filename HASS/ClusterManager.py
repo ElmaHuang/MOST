@@ -277,10 +277,10 @@ class ClusterManager():
             # print str(e)
             # result = {"code": "1", "instanceList": []}
             message = "ClusterManager--listInstance,getInstanceList fail" + str(e)
+            logging.error(message)
             result = Response(code="failed",
                               message=message,
                               data={"instance_list": []})
-            logging.error(message)
             return result
 
     @staticmethod

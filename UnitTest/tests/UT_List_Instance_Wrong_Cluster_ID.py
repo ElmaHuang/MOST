@@ -22,8 +22,10 @@ def run():
         result = ClusterManager.listInstance(wrong_cluster_id, send_flag=False)
         if result.code == "succeed":
             return False
+        else:
+            return True
     except:
-        return True
+        return False
     finally:
         ClusterManager.deleteNode(cluster_id, "compute1", write_DB=False)
         Postprocess.deleteInstance()
