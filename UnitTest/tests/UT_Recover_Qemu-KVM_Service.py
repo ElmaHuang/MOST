@@ -33,7 +33,7 @@ def recover_service_fail(client, detect_time=5):
     try:
         while detect_time > 0:
             state = _get_detect_result()
-            if state == "":
+            if "health" in state:
                 result = True
                 break
             else:
