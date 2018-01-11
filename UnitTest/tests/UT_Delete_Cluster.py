@@ -11,7 +11,7 @@ def run():
     cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
     try:
         result = ClusterManager.deleteCluster(cluster_id)
-        if result["code"] == "0":
+        if result.code == "succeed":
             return True
         else:
             return False

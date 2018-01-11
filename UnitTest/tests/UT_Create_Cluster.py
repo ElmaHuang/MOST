@@ -10,7 +10,7 @@ def run():
     try:
         ClusterManager.init()
         result = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
-        if result["code"] == "0":
+        if result.code == "succeed":
             return True
         else:
             return False
