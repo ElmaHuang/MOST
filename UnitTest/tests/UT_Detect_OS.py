@@ -1,6 +1,7 @@
 import socket
 import sys
 import time
+
 import paramiko
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
@@ -23,31 +24,34 @@ def run(check_timeout=300):
     except Exception as e:
         print str(e)
     detect_time = 30
+    result = False
     try:
         while detect_time > 0:
             fail = thread.detect()
             print fail
             if fail == "os":
-                return True
+                result = True
             detect_time -= 1
             time.sleep(1)
-        return False
+        result = False
     except Exception as e:
         print str(e)
+        result = False
     finally:
         ipmi_manager.rebootNode(HOST)
-        time.sleep(5)  # wait node to reboot
-        boot_up = None
-        while check_timeout > 0:
-            boot_up = _check_boot_up()
-            if boot_up == "OK":
-                print "%s boot up!" % HOST
-                check_timeout = 0
-            time.sleep(1)
-            check_timeout -= 1
-        if boot_up != "OK":
-            print "%s not boot up!" % HOST
-            return False
+        return result
+        #     time.sleep(5)  # wait node to reboot
+        #     boot_up = None
+        #     while check_timeout > 0:
+        #         boot_up = _check_boot_up()
+        #         if boot_up == "OK":
+        #             print "%s boot up!" % HOST
+        #             check_timeout = 0
+        #         time.sleep(1)
+        #         check_timeout -= 1
+        #     if boot_up != "OK":
+        #         print "%s not boot up!" % HOST
+        #         return False
 
 
 def _remote_exec(client, cmd):

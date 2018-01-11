@@ -1,6 +1,7 @@
 import socket
 import sys
 import time
+
 import paramiko
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
@@ -8,7 +9,7 @@ from IPMIModule import IPMIManager
 from Node import Node
 
 CLUSTER_ID = "clusterid"
-HOST = "compute3"
+HOST = "compute4"
 PORT = 2468
 
 
@@ -17,23 +18,27 @@ def run(check_timeout=300):
     thread = node.detection_thread
     client = _create_ssh_client(HOST)
     ipmi_manager = IPMIManager()
-
     _remote_exec(client, "sudo poweroff -f")
+    print "wait %s to shutoff" % HOST
+    time.sleep(15)
+    result = False
     try:
         detect_time = 5
         while detect_time > 0:
             fail = thread.detect()
             print fail
             if fail == "power":
-                return True
+                result = True
             detect_time -= 1
             time.sleep(1)
-        return False
+        result = False
     except Exception as e:
         print str(e)
+        result = False
     finally:
-        time.sleep(5)  # wait node to shutoff
         ipmi_manager.startNode(HOST)
+        return result
+        '''
         boot_up = None
         while check_timeout > 0:
             boot_up = _check_boot_up()
@@ -45,6 +50,7 @@ def run(check_timeout=300):
         if boot_up != "OK":
             print "%s not boot up!" % HOST
             return False
+        '''
 
 
 def _remote_exec(client, cmd):

@@ -19,35 +19,35 @@ def run(check_timeout=300):
     client = _create_ssh_client(HOST)
     ipmi_manager = IPMIManager()
     _remote_exec(client, "sudo systemctl stop networking.service")
-    detect_time = 5
+    detect_time = 20
+    result = False
     try:
         while detect_time > 0:
             fail = thread.detect()
             print fail
             if fail == "network":
-                return True
+                result = True
             detect_time -= 1
             time.sleep(1)
-        return False
+        result = False
     except Exception as e:
         print str(e)
-        return False
-    '''
+        result = False
     finally:
         ipmi_manager.rebootNode(HOST)
-        time.sleep(5)  # wait node to reboot
-        boot_up = None
-        while check_timeout > 0:
-            boot_up = _check_boot_up()
-            if boot_up == "OK":
-                print "%s boot up!" % HOST
-                check_timeout = 0
-            time.sleep(1)
-            check_timeout -= 1
-        if boot_up != "OK":
-            print "%s not boot up!" % HOST
-            return False
-    '''
+        return result
+        #     time.sleep(5)  # wait node to reboot
+        #     boot_up = None
+        #     while check_timeout > 0:
+        #         boot_up = _check_boot_up()
+        #         if boot_up == "OK":
+        #             print "%s boot up!" % HOST
+        #             check_timeout = 0
+        #         time.sleep(1)
+        #         check_timeout -= 1
+        #     if boot_up != "OK":
+        #         print "%s not boot up!" % HOST
+        #         return False
 
 
 def _remote_exec(client, cmd):
