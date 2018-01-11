@@ -138,7 +138,8 @@ class Cluster(ClusterInterface):
                 host = instance.host
                 if instance.id == instance_id:
                     self.instance_list.remove(instance)
-                    if send_flag == True: self.sendUpdateInstance(host)
+                    if send_flag == True:
+                        self.sendUpdateInstance(host)
                     message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
                     logging.info(message)
                     # result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
