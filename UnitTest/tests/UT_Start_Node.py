@@ -5,7 +5,7 @@ import time
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from IPMIModule import IPMIManager
 
-HOST = "compute3"
+HOST = "compute4"
 PORT = 2468
 
 
