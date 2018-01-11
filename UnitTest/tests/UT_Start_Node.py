@@ -12,6 +12,7 @@ PORT = 2468
 def run(check_timeout=300):
     ipmi_manager = IPMIManager()
     result = ipmi_manager.startNode(HOST)
+    print "wait to node boot up"
     time.sleep(100)
     response = _check_boot_up(check_timeout)
     print response
@@ -40,4 +41,7 @@ def _check_boot_up(check_timeout):
                 continue
         except Exception as e:
             print str(e)
-            return "Error"
+            time.sleep(1)
+            check_timeout -= 1
+            continue
+    return "Error"
