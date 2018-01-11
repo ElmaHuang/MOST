@@ -9,7 +9,7 @@ from IPMIModule import IPMIManager
 from Node import Node
 
 CLUSTER_ID = "clusterid"
-HOST = "compute3"
+HOST = "compute4"
 PORT = 2468
 
 ipmi_manager = IPMIManager()
