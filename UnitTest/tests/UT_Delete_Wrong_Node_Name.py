@@ -16,7 +16,7 @@ def run():
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
     try:
         result = ClusterManager.deleteNode(cluster_id, WRONG_NODE_NAME[0], write_DB=False)
-        if result.code == "succeed":
+        if result.code == "failed":
             return True
         else:
             return False
