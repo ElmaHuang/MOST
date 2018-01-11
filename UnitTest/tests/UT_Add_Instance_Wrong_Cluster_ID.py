@@ -26,5 +26,5 @@ def run():
     except:
         return False
     finally:
-        ClusterManager.deleteNode(cluster_id, "compute1", write_DB=False)
+        ClusterManager.deleteNode(cluster_id, "compute1", write_DB=False, send_flag=False)
         Postprocess.deleteInstance()
