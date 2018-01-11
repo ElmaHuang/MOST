@@ -8,7 +8,7 @@ CLUSTER_NAME = "cluster01"
 
 def run():
     ClusterManager.init()
-    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["clusterId"]
+    cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)["cluster_id"]
     try:
         result = ClusterManager.deleteCluster(cluster_id)
         if result.code == "succeed":

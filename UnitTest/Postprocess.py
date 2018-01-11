@@ -4,7 +4,7 @@
 import os
 import subprocess
 
-import Instance
+import UnitTestInstance
 
 SERVER_SUCCESS_MSG = "start/running"
 SERVER_FAIL_MSG = "stop/waiting"
@@ -12,7 +12,7 @@ GET_HASS_PID = "ps xu | grep Hass | grep -v grep | awk '{ print $2 }'"
 
 
 def deleteInstance():
-    return Instance.delete()
+    return UnitTestInstance.delete()
 
 
 def server_stop(iii_support=True):

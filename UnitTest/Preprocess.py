@@ -5,7 +5,7 @@ import os
 import subprocess
 import time
 
-import Instance
+import UnitTestInstance
 
 III_SERVER_SUCCESS_MSG = "start/running"
 # III_SERVER_FAIL_MSG = "stop/waiting"
@@ -33,15 +33,15 @@ def server_start(iii_support=True):
 
 
 def create_with_provider_instance():
-    return Instance.create_provider_instance()
+    return UnitTestInstance.create_provider_instance()
 
 
 def create_with_selfservice_instance():
-    return Instance.create_selfservice_instance()
+    return UnitTestInstance.create_selfservice_instance()
 
 
 def _deleteInstance():
-    return Instance.delete()
+    return UnitTestInstance.delete()
 
 
 def _local_exec(cmd, iii=True):
