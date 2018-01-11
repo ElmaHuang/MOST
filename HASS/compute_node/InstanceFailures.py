@@ -58,10 +58,6 @@ class InstanceFailure(threading.Thread):
                             self.failed_instances = []
                     if not self._check_libvirt_connection(libvirt_connection):
                         break
-                        # elif not libvirt_connection.isAlive() == 1:
-                        # 1 if alive, 0 if dead, -1 on error
-                        # break
-                        # time.sleep(5)
 
     def createLibvirtDetectionThread(self):
         try:
