@@ -1,7 +1,8 @@
-import Preprocess
-import Postprocess
-import xmlrpclib
 import ConfigParser
+import xmlrpclib
+
+import Postprocess
+import Preprocess
 
 config = ConfigParser.RawConfigParser()
 config.read('hass.conf')

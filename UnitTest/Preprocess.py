@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Instance
-import subprocess
 import os
+import subprocess
 import time
+
+import Instance
 
 III_SERVER_SUCCESS_MSG = "start/running"
 # III_SERVER_FAIL_MSG = "stop/waiting"
