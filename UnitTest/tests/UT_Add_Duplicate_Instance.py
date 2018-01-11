@@ -16,9 +16,9 @@ def run():
     cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
 
-    ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
+    ClusterManager.addInstance(cluster_id, instance_id, write_DB=False, send_flag=False)
     try:
-        result = ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
+        result = ClusterManager.addInstance(cluster_id, instance_id, write_DB=False, send_flag=False)
         if result.code == "failed":
             return True
         else:

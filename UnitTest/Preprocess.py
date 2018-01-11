@@ -26,7 +26,7 @@ def server_start(iii_support=True):
         if III_SERVER_SUCCESS_MSG in status:
             raise Exception("Server not ready !")
     else:
-        _local_exec(MOST_SERVER_START_COMMAND, False)
+        _local_exec(MOST_SERVER_START_COMMAND, iii=False)
 
     print "SERVER READY"
     time.sleep(1)

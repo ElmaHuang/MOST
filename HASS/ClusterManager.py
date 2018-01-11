@@ -9,11 +9,12 @@
 #:Description:
 #	This is a static class which maintains all the data structure.
 ##########################################################
+import logging
+import uuid
+
 from Cluster import Cluster
 from DatabaseManager import DatabaseManager
 from Response import Response
-import uuid
-import logging
 
 
 class ClusterManager():
@@ -189,7 +190,7 @@ class ClusterManager():
             return result
 
     @staticmethod
-    def addInstance(cluster_id, instance_id, write_DB=True):
+    def addInstance(cluster_id, instance_id, send_flag=True, write_DB=True):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -202,7 +203,7 @@ class ClusterManager():
             try:
                 if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
                     raise Exception("instance already being protected ")
-                result = cluster.addInstance(instance_id)
+                result = cluster.addInstance(instance_id, send_flag)
                 if write_DB:
                     ClusterManager.syncToDatabase()
                 logging.info("ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (
@@ -247,7 +248,7 @@ class ClusterManager():
                 return result
 
     @staticmethod
-    def listInstance(cluster_id, send=True):
+    def listInstance(cluster_id, send_flag=True):
         cluster = ClusterManager.getCluster(cluster_id)
         try:
             if not cluster:
@@ -257,9 +258,9 @@ class ClusterManager():
             # delete illegal instance
             if illegal_instance != []:
                 for instance in illegal_instance:
-                    ClusterManager.deleteInstance(cluster_id, instance[0], False)
+                    ClusterManager.deleteInstance(cluster_id, instance[0], send_flag=False)
             # send upadte host of legal instacne and prev_host of illegal instance
-            if send == True:
+            if send_flag == True:
                 for instance in instance_list[:]:
                     cluster.sendUpdateInstance(instance[2])  # info[2]
                 for instance in illegal_instance[:]:
@@ -366,9 +367,9 @@ class ClusterManager():
         try:
             exist_cluster = ClusterManager._db.syncFromDB()
             for cluster in exist_cluster:
-                ClusterManager.createCluster(cluster["cluster_name"], cluster["cluster_id"], False)
+                ClusterManager.createCluster(cluster["cluster_name"], cluster["cluster_id"], write_DB=False)
                 if cluster["node_list"] != []:
-                    ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], False)
+                    ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], write_DB=False)
                 for instance in cluster["instance_list"]:
                     ClusterManager.addInstance(cluster["cluster_id"], instance)
             logging.info("ClusterManager--synco from DB finish")

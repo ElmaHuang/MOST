@@ -18,7 +18,7 @@ def run():
 
     wrong_cluster_id = "wrong id"
     try:
-        result = ClusterManager.addInstance(wrong_cluster_id, instance_id, write_DB=False)
+        result = ClusterManager.addInstance(wrong_cluster_id, instance_id, write_DB=False, send_flag=False)
         if result.code == "failed":
             return True
         else:

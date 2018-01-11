@@ -10,11 +10,12 @@
 # This is a class which maintains cluster data structure.
 # #########################################################
 
-from ClusterInterface import ClusterInterface
-from Response import Response
-from Node import Node
-from Instance import Instance
 import logging
+
+from ClusterInterface import ClusterInterface
+from Instance import Instance
+from Node import Node
+from Response import Response
 
 
 class Cluster(ClusterInterface):
@@ -89,7 +90,7 @@ class Cluster(ClusterInterface):
             ret.append(node.getInfo())
         return ret
 
-    def addInstance(self, instance_id):
+    def addInstance(self, instance_id, send_flag=True):
         # if self.isProtected(instance_id): # check instance is already being protected
         # raise Exception("this instance is already being protected!")
         if not self.checkInstanceExist(instance_id):
@@ -109,7 +110,8 @@ class Cluster(ClusterInterface):
                                     host=final_host,
                                     status=self.nova_client.getInstanceState(instance_id),
                                     network=self.nova_client.getInstanceNetwork(instance_id))
-                self.sendUpdateInstance(final_host)
+                if send_flag == True:
+                    self.sendUpdateInstance(final_host)
                 self.instance_list.append(instance)
                 message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
                 logging.info(message)
@@ -129,7 +131,7 @@ class Cluster(ClusterInterface):
             finally:
                 return result
 
-    def deleteInstance(self, instance_id, send_flag):
+    def deleteInstance(self, instance_id, send_flag=True):
         result = None
         try:
             for instance in self.instance_list:
@@ -164,7 +166,7 @@ class Cluster(ClusterInterface):
     def deleteInstanceByNode(self, node):
         protected_instance_list = self.getProtectedInstanceListByNode(node)
         for instance in protected_instance_list:
-            self.deleteInstance(instance.id, True)
+            self.deleteInstance(instance.id, send_flag=True)
 
     # list Instance
     def getAllInstanceInfo(self):

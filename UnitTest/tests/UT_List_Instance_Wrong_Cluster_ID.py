@@ -1,4 +1,3 @@
-
 import sys
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
@@ -16,11 +15,11 @@ def run():
     cluster_id = ClusterManager.createCluster(CLUSTER_NAME, write_DB=False)
     cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
-    ClusterManager.addInstance(cluster_id, instance_id, write_DB=False)
+    ClusterManager.addInstance(cluster_id, instance_id, write_DB=False, send_flag=False)
 
     wrong_cluster_id = "wrong id"
     try:
-        result = ClusterManager.listInstance(wrong_cluster_id)
+        result = ClusterManager.listInstance(wrong_cluster_id, send_flag=False)
         if result.code == "succeed":
             return False
     except:

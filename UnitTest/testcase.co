@@ -20,12 +20,12 @@ UT_Delete_Wrong_Node_Name    description
 UT_List_Node    description
 UT_List_Node_Wrong_Cluster_ID    description
 #================Instance=================
-UT_Add_Instance    description
-UT_Delete_Instance    description
 UT_List_Instance    description
 UT_Delete_Instance_Wrong_ID    description
 UT_Delete_Instance_Wrong_Cluster_ID    description
+UT_Delete_Instance    description
 UT_Add_Instance_Wrong_Cluster_ID    description
+UT_Add_Instance    description
 UT_Add_Duplicate_Instance    description
 UT_List_Instance_Wrong_Cluster_ID    description
 #==================Recover====================

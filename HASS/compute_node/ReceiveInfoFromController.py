@@ -1,10 +1,11 @@
-import threading
-import socket
-import xmlrpclib
-import subprocess
 import ConfigParser
-from Instance import Instance
+import socket
+import subprocess
+import threading
+import xmlrpclib
+
 from HAInstance import HAInstance
+from Instance import Instance
 
 
 class ReceiveInfoFromController(threading.Thread):
@@ -44,7 +45,7 @@ class ReceiveInfoFromController(threading.Thread):
 
     def _getHAInstance(self, clusterId):
         try:
-            instance_list = self.server.listInstance(clusterId, False)["data"]["instance_list"]
+            instance_list = self.server.listInstance(clusterId, send_flag=False)["data"]["instance_list"]
         except Exception as e:
             print "get ha instance fail" + str(e)
             instance_list = []
