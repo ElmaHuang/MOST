@@ -11,16 +11,16 @@
 ##########################################################
 
 
-from ClusterManager import ClusterManager
-from NovaClient import NovaClient
-from Detector import Detector
-from DatabaseManager import IIIDatabaseManager
-from Response import Response
-import State
-import logging
 import ConfigParser
-import time
+import logging
 import subprocess
+import time
+
+import State
+from ClusterManager import ClusterManager
+from DatabaseManager import IIIDatabaseManager
+from Detector import Detector
+from NovaClient import NovaClient
 
 
 class RecoveryManager(object):
@@ -176,7 +176,6 @@ class RecoveryManager(object):
         status = self.checkInstanceNetworkStatus(fail_node, cluster)
         if status == False:
             logging.error("RecoverManager : check vm status false")
-
         print "update instance"
         cluster.updateInstance()
 
