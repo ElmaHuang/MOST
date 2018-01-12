@@ -175,7 +175,7 @@ class RecoveryManager(object):
         print "check instance status"
         status = self.checkInstanceNetworkStatus(fail_node, cluster)
         if status == False:
-            logging.error("RecoverManager : check vm status false")
+            logging.error("RecoverManager : check vm network status false")
         print "update instance"
         cluster.updateInstance()
 
