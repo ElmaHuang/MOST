@@ -15,7 +15,7 @@ ipmi_manager = IPMIManager()
 
 def run(check_timeout=300):
     client = _create_ssh_client(HOST)
-    i, o, e = _remote_exec(client, "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & sh os_hang.sh")
+    i, o, e = _remote_exec(client, "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
     print o.read()
     result = detection_OS_fail(20)
     if result:
