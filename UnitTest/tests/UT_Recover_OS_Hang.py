@@ -17,9 +17,9 @@ ipmi_manager = IPMIManager()
 def run():
     try:
         client = _create_ssh_client(HOST)
-        # cmd = "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/;sh os_hang.sh &;sh os_hang.sh"
+        cmd = "sudo sh /home/" + HOST + "/Desktop/MOST/HASS/compute_node/os_hang.sh"
         #cmd = "kill -SEGV 1 & ; kill -SEGV 1"
-        cmd = "sudo strace -p 1 & ; sudo kill -9 1"
+        #cmd = "sudo sh /home/compute4/Desktop/test.sh"
         stdin, stdout, stderr = _remote_exec(client, cmd)
         # print stdout.read()
         result = detection_OS_fail(20)
