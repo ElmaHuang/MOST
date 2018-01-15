@@ -17,8 +17,9 @@ ipmi_manager = IPMIManager()
 def run():
     try:
         client = _create_ssh_client(HOST)
-        stdin, stdout, stderr = client.exec_command("cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
-        print stdout.readlines()
+        cmd = "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/;sh os_hang.sh &;sh os_hang.sh"
+        stdin, stdout, stderr = _remote_exec(client, cmd)
+        print stdout.read()
         result = detection_OS_fail(20)
         if result:
             print "detect os successfuly"
