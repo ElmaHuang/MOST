@@ -1,7 +1,6 @@
 import socket
 import sys
 import time
-
 import paramiko
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
@@ -11,47 +10,67 @@ from Node import Node
 CLUSTER_ID = "clusterid"
 HOST = "compute4"
 PORT = 2468
+ipmi_manager = IPMIManager()
 
 
 def run(check_timeout=300):
-    node = Node(HOST, CLUSTER_ID)
-    thread = node.detection_thread
     client = _create_ssh_client(HOST)
-    ipmi_manager = IPMIManager()
-    try:
-        i, o, e = _remote_exec(client, "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh")
-        print o.read()
-    except Exception as e:
-        print str(e)
-    detect_time = 30
+    i, o, e = _remote_exec(client, "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh")
+    print o.read()
+    result = detection_OS_fail(20)
+    if result:
+        print "detect os successfuly"
+        recover = recover_os_fail(180)
+        if recover:
+            return True
+        else:
+            return False
+    else:
+        print "detect os fail"
+        return False
+
+
+def recover_os_fail(detect_time=5):
+    ipmi_manager.rebootNode(HOST)
     result = False
     try:
         while detect_time > 0:
-            fail = thread.detect()
-            print fail
-            if fail == "os":
+            state = _get_detect_result()
+            if "health" in state:
                 result = True
-            detect_time -= 1
-            time.sleep(1)
-        result = False
+                break
+            else:
+                detect_time -= 1
+                time.sleep(1)
     except Exception as e:
         print str(e)
         result = False
-    finally:
-        ipmi_manager.rebootNode(HOST)
-        return result
-        #     time.sleep(5)  # wait node to reboot
-        #     boot_up = None
-        #     while check_timeout > 0:
-        #         boot_up = _check_boot_up()
-        #         if boot_up == "OK":
-        #             print "%s boot up!" % HOST
-        #             check_timeout = 0
-        #         time.sleep(1)
-        #         check_timeout -= 1
-        #     if boot_up != "OK":
-        #         print "%s not boot up!" % HOST
-        #         return False
+    return result
+
+
+def detection_OS_fail(detect_time=5):
+    result = False
+    try:
+        while detect_time > 0:
+            fail = _get_detect_result()
+            print fail
+            if "os" in fail:
+                result = True
+                break
+            else:
+                detect_time -= 1
+                time.sleep(1)
+    except Exception as e:
+        print str(e)
+        result = False
+    return result
+
+
+def _get_detect_result():
+    node = Node(HOST, CLUSTER_ID)
+    thread = node.detection_thread
+    result = thread.detect()
+    return result
 
 
 def _remote_exec(client, cmd):
