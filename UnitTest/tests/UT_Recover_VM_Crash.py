@@ -49,7 +49,7 @@ def _create_cluster():
 
 
 def delete_cluster(cluster_id):
-    ClusterManager.deleteNode(cluster_id, "compute1", write_DB=False)
+    ClusterManager.deleteNode(cluster_id, HOST, write_DB=False)
     Postprocess.deleteInstance()
 
 
@@ -105,6 +105,7 @@ def _instance_failure(client, instance_name):
     output = str(o.read())
     output = output.split()[0]
     print output
-    #print "pid:", pid
-    # kill_cmd = "sudo kill -9 %s" % pid
-    # _remote_exec(client, kill_cmd)
+    pid = output
+    print "pid:", pid
+    kill_cmd = "sudo kill -9 %s" % pid
+    _remote_exec(client, kill_cmd)
