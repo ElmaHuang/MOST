@@ -17,9 +17,8 @@ ipmi_manager = IPMIManager()
 def run():
     try:
         client = _create_ssh_client(HOST)
-        i, o, e = _remote_exec(client,
-                               "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
-        print o.read()
+        stdin, stdout, stderr = client.exec_command("cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
+        print stdout.readlines()
         result = detection_OS_fail(20)
         if result:
             print "detect os successfuly"
@@ -84,10 +83,10 @@ def _remote_exec(client, cmd):
 
 
 def _create_ssh_client(name, default_timeout=1):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client = paramiko.client.SSHClient()
+    client.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())
     try:
-        client.connect(name, username='root', timeout=default_timeout)
+        client.connect(hosrname=name, username='root', timeout=default_timeout)
         return client
     except Exception as e:
         print "Excpeption : %s" % str(e)
