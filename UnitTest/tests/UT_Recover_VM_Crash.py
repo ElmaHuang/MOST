@@ -86,7 +86,8 @@ def detect_instance_status(timeout=5):
         while timeout > 0:
             status = Preprocess._get_instance_status()
             if "ACTIVE" in status:
-                return True
+                result = True
+                break
             else:
                 timeout -= 1
                 time.sleep(1)
@@ -99,7 +100,7 @@ def detect_instance_status(timeout=5):
 
 def _instance_failure(client, instance_name):
     # result = False
-    cmd = "ps aux | grep " + instance_name + " | awk '{ print $2 }'"
+    cmd = "sudo ps aux | grep " + instance_name + " | awk '{ print $2 }'"
     # cmd = "sudo hostname"
     i, o, e = _remote_exec(client, cmd)
     output = str(o.read())
