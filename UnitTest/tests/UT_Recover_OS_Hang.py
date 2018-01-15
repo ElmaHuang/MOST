@@ -1,6 +1,7 @@
 import socket
 import sys
 import time
+
 import paramiko
 
 sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
@@ -13,21 +14,25 @@ PORT = 2468
 ipmi_manager = IPMIManager()
 
 
-def run(check_timeout=300):
-    client = _create_ssh_client(HOST)
-    i, o, e = _remote_exec(client, "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
-    print o.read()
-    result = detection_OS_fail(20)
-    if result:
-        print "detect os successfuly"
-        recover = recover_os_fail(180)
-        if recover:
-            return True
+def run():
+    try:
+        client = _create_ssh_client(HOST)
+        i, o, e = _remote_exec(client,
+                               "cd /home/" + HOST + "/Desktop/MOST/HASS/compute_node/ ; sh os_hang.sh & ;sh os_hang.sh")
+        print o.read()
+        result = detection_OS_fail(20)
+        if result:
+            print "detect os successfuly"
+            recover = recover_os_fail(180)
+            if recover:
+                return True
+            else:
+                return False
         else:
+            print "detect os fail"
             return False
-    else:
-        print "detect os fail"
-        return False
+    except Exception as e:
+        print str(e)
 
 
 def recover_os_fail(detect_time=5):
@@ -74,7 +79,7 @@ def _get_detect_result():
 
 
 def _remote_exec(client, cmd):
-    stdin, stdout, stderr = client.exec_command(cmd)
+    stdin, stdout, stderr = client.exec_command(cmd, timeout=5)
     return stdin, stdout, stderr
 
 
