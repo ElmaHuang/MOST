@@ -45,6 +45,7 @@ def _create_cluster():
     cluster_id = cluster_id.data.get("cluster_id")
     ClusterManager.addNode(cluster_id, NODE_NAME, write_DB=False)
     ClusterManager.addInstance(cluster_id, instance_id, write_DB=False, send_flag=True)
+    time.sleep(20)
     return cluster_id, instance_id
 
 
@@ -105,10 +106,10 @@ def _instance_failure(client, instance_name):
     i, o, e = _remote_exec(client, cmd)
     output = str(o.read())
     output = output.split()[0]
-    #print output
+    # print output
     pid = output
     print "pid:", pid
     kill_cmd = "sudo kill -9 %s" % pid
     _remote_exec(client, kill_cmd)
     time.sleep(20)
-    #print o.read()
+    # print o.read()
