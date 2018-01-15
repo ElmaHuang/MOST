@@ -86,7 +86,7 @@ def _create_ssh_client(name, default_timeout=1):
     client = paramiko.client.SSHClient()
     client.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())
     try:
-        client.connect(hosrname=name, username='root', timeout=default_timeout)
+        client.connect(hostname=name, username='root', timeout=default_timeout)
         return client
     except Exception as e:
         print "Excpeption : %s" % str(e)
