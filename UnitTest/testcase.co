@@ -40,5 +40,5 @@
 #UT_Recover_Qemu-KVM_Service    description
 #UT_Recover_Network_Isolation    description
 #UT_Recover_OS_Hang    description
-UT_Recover_Power_Status    description
-UT_Detect_Instance_Failures descrpiABCD
+#UT_Recover_Power_Status    description
+UT_Recover_VM_Crash    description

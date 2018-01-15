@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from keystoneauth1.identity import v3
-from keystoneauth1 import session
-from novaclient import client
 import ConfigParser
-import Config
 import time
+
+from keystoneauth1 import session
+from keystoneauth1.identity import v3
+from novaclient import client
+
+import Config
 
 config = ConfigParser.RawConfigParser()
 config.read('hass.conf')
@@ -59,9 +61,11 @@ def delete():
         print "Postprocess : delete instance %s success!" % Config.INSTANCE_NAME
     return
 
+
 def _get_instance_name_by_id(instance_id):
     instance = novaClient.servers.get(instance_id)
     return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
+
 
 def _getInstanceByName(name):
     instance_list = novaClient.servers.list()
@@ -74,6 +78,11 @@ def _getInstanceByName(name):
 def _getInstanceIDByName(name):
     instance = _getInstanceByName(name)
     return getattr(instance, 'id')
+
+
+def _get_Instance_state_by_name():
+    instance = _getInstanceByName(Config.INSTANCE_NAME)
+    return getattr(instance, 'status')
 
 
 def _InstanceActive(instance_name, time_out=60):
