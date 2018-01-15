@@ -59,6 +59,9 @@ def delete():
         print "Postprocess : delete instance %s success!" % Config.INSTANCE_NAME
     return
 
+def _get_instance_name_by_id(instance_id):
+    instance = novaClient.servers.get(instance_id)
+    return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
 def _getInstanceByName(name):
     instance_list = novaClient.servers.list()

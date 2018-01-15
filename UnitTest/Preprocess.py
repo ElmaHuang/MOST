@@ -40,6 +40,10 @@ def create_with_selfservice_instance():
     return UnitTestInstance.create_selfservice_instance()
 
 
+def _get_instance_name(instance_id):
+    return UnitTestInstance._get_instance_name_by_id(instance_id)
+
+
 def _deleteInstance():
     return UnitTestInstance.delete()
 
