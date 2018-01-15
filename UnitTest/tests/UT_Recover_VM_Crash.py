@@ -34,8 +34,9 @@ def run():
         print str(e)
         return False
     finally:
-        Postprocess.server_stop(False)
         delete_cluster(cluster_id)
+        Postprocess.server_stop(False)
+
 
 
 def _create_cluster():
