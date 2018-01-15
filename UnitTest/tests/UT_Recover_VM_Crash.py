@@ -14,8 +14,8 @@ from ClusterManager import ClusterManager
 # from InstanceFailures import InstanceFailures
 
 CLUSTER_NAME = "cluster01"
-NODE_NAME = ["compute1"]
-HOST = "compute1"
+NODE_NAME = ["compute3"]
+HOST = "compute3"
 
 
 def run():
@@ -102,7 +102,7 @@ def _instance_failure(client, instance_name):
     cmd = "ps aux | grep " + instance_name + " | awk '{ print $2 }'"
     # cmd = "sudo hostname"
     i, o, e = _remote_exec(client, cmd)
-    print o.read()
+    print "o",o.read()
     pid = o.read()
     print "pid:", pid
     # kill_cmd = "sudo kill -9 %s" % pid
