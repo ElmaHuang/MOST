@@ -165,9 +165,17 @@ class IPMINodeTemperatureTable(tables.DataTable):
 
     device = tables.Column("device", verbose_name=_("Device"))
 
+    sensor_type = tables.Column("sensor_type", verbose_name=_("Sensor Type"))
+
     value = tables.Column("value", verbose_name=_("Value"))
 
+    status = tables.Column("status", verbose_name=_("Status"))
+
     lc = tables.Column("lower_critical", verbose_name=_("Lower Critical"))
+
+    l = tables.Column("lower_no_critical", verbose_name=_("Lower Non-Critical"))
+
+    u = tables.Column("upper_no_critical", verbose_name=_("Upper Non-Critical"))
 
     uc = tables.Column("upper_critical", verbose_name=_("Upper Critical"))
 

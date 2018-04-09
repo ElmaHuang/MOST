@@ -63,8 +63,8 @@ class DetailView(tables.MultiTableView):
                                                                                    "rpc_password") + "@127.0.0.1:" + config.get(
             "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
-        #correct, result = server.getAllInfoOfNode(self.kwargs["node_id"])
-        #self.volt_list = []
+        self.result = server.getAllInfoOfNode(self.kwargs["node_id"])
+        # self.volt_list = []
         temp_data = []
         if self.result["code"] == "succeed":
             table_index = 0
