@@ -55,9 +55,8 @@ class DetailView(tables.MultiTableView):
     table_classes = (project_tables.IPMINodeTemperatureTable)
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
-
-    volt_list = []
-
+    result = None
+    
     def get_IPMI_Temp_data(self):
         authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
                                                                                    "rpc_password") + "@127.0.0.1:" + config.get(
