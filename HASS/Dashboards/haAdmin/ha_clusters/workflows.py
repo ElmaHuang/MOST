@@ -10,8 +10,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import ConfigParser
 import xmlrpclib
-
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
@@ -19,6 +19,9 @@ from horizon import forms
 from horizon import messages
 from horizon import workflows
 from openstack_dashboard import api
+
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/MOST/HASS/hass.conf')
 
 
 class SetHAClusterInfoAction(workflows.Action):
@@ -152,7 +155,9 @@ class CreateHAClusterWorkflow(workflows.Workflow):
     default_steps = (SetHAClusterInfoStep, AddHostsToHAClusterStep)
 
     def handle(self, request, context):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         context_computing_nodes = context['computing_nodes']
         name = context['name']
@@ -178,7 +183,9 @@ class AddComputingNodeWorkflow(workflows.Workflow):
     default_steps = (AddComputingNodesToHAClusterStep,)
 
     def handle(self, request, context):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         context_computing_nodes = context['computing_nodes']
         node_list = []
@@ -191,7 +198,8 @@ class AddComputingNodeWorkflow(workflows.Workflow):
         if result["code"] == 'failed':  # error
             self.failure_message = result["message"]
             return False
-        self.success_message = _('Add new Computing Node %s to HA Cluster. %s' % (",".join(node_list),result["message"]))
+        self.success_message = _(
+            'Add new Computing Node %s to HA Cluster. %s' % (",".join(node_list), result["message"]))
         messages.success(request, self.success_message)
         return True
 

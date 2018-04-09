@@ -1,5 +1,5 @@
+import ConfigParser
 import xmlrpclib
-
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.utils.datastructures import SortedDict
@@ -10,6 +10,9 @@ from horizon import tables
 from openstack_dashboard import api
 from openstack_dashboard.dashboards.haAdmin.ha_instances import forms as project_forms
 from openstack_dashboard.dashboards.haAdmin.ha_instances import tables as project_tables
+
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/MOST/HASS/hass.conf')
 
 
 class AddView(forms.ModalFormView):
@@ -63,7 +66,9 @@ class IndexView(tables.DataTableView):
     # return self._more
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         clusters = server.listCluster()
         instances = []

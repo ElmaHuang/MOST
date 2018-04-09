@@ -1,10 +1,13 @@
+import ConfigParser
 import xmlrpclib
-
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 from horizon import messages
 from horizon import tables
+
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/MOST/HASS/hass.conf')
 
 
 class GetNodeInfoAction(tables.LinkAction):
@@ -39,7 +42,9 @@ class StartNodeAction(tables.BatchAction):
         return (computing_node.state != "up")
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.startNode(obj_id)
         if result["code"] == "failed":
@@ -65,11 +70,13 @@ class RebootNodeAction(tables.DeleteAction):
         )
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.rebootNode(obj_id)
         if result["code"] == "failed":
-            err_msg = result["meaasge"]
+            err_msg = result["message"]
             messages.error(request, err_msg)
 
 
@@ -100,7 +107,9 @@ class ShutOffNodeAction(tables.BatchAction):
         return (computing_node.state != "down")
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.shutOffNode(obj_id)
         if result["code"] == "failed":
