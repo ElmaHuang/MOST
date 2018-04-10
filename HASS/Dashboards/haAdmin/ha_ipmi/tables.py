@@ -183,19 +183,3 @@ class IPMINodeTemperatureTable(tables.DataTable):
         name = "IPMI_Temp"
         hidden_title = False
         verbose_name = _("Temperature")
-
-
-'''
-class IPMINodeVoltageTable(tables.DataTable):
-	
-    sensor = tables.Column("sensor_ID", verbose_name=_("Sensor"))
-
-    device = tables.Column("device", verbose_name=_("Device"))
-
-    value = tables.Column("value", verbose_name=_("Value"))
-
-    class Meta:
-        name = "IPMI_Volt"
-        hidden_title = False
-        verbose_name = _("Voltage")
-'''

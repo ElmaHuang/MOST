@@ -26,16 +26,6 @@ class Temperature:
         self.upper_critical = upper_critical
 
 
-'''
-class Voltage:
-    def __init__(self, id, sensor_ID, device, value):
-        self.id = id
-        self.sensor_ID = sensor_ID
-        self.device = device
-        self.value = value
-'''
-
-
 class IndexView(tables.DataTableView):
     table_class = project_tables.Ipmi_CN_Table
     template_name = 'haAdmin/ha_ipmi/index.html'
@@ -56,7 +46,7 @@ class DetailView(tables.MultiTableView):
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
     result = None
-    
+
     def get_IPMI_Temp_data(self):
         authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
                                                                                    "rpc_password") + "@127.0.0.1:" + config.get(
@@ -84,13 +74,3 @@ class DetailView(tables.MultiTableView):
                                     upper, upper_critical))
                     table_index += 1
         return temp_data
-
-    '''
-    def get_IPMI_Volt_data(self):
-        volt_data = []
-        volt_id = 0
-        for volt in self.volt_list:
-            volt_data.append(Voltage(volt_id, volt[0], volt[1], volt[2]))
-            volt_id = volt_id + 1
-        return volt_data
-    '''
