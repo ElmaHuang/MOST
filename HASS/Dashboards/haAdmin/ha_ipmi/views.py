@@ -42,7 +42,7 @@ class IndexView(tables.DataTableView):
 
 
 class DetailView(tables.MultiTableView):
-    table_classes = (project_tables.IPMINodeTemperatureTable)
+    table_classes = (project_tables.IPMINodeTemperatureTable,)
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
     result = None
